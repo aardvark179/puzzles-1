@@ -172,13 +172,13 @@ static int saveGameRead(void *ctx, void *buf, int len)
     
     [aiv startAnimating];
     // Give game generation 250 ms to come up with something before we display the Generating Puzzle indicator
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.25e9), dispatch_get_current_queue(), ^{ box.hidden = NO; });
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.25e9), dispatch_get_main_queue(), ^{ box.hidden = NO; });
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         midend_new_game(m);
         dispatch_async(dispatch_get_main_queue(), ^{
             [aiv stopAnimating];
             [overlay removeFromSuperview];
-            me = m;
+            self->me = m;
             [self layoutSubviews];
         });
     });

@@ -57,11 +57,6 @@
     // Dispose of any resources that can be recreated.
 }
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation
-{
-    return YES;
-}
-
 - (void)webViewDidFinishLoad:(UIWebView *)webView
 {
     backButton.enabled = webview.canGoBack;

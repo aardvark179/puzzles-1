@@ -56,11 +56,6 @@
     // Dispose of any resources that can be recreated.
 }
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation
-{
-    return YES;
-}
-
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
@@ -145,7 +140,7 @@
      // Pass the selected object to the new view controller.
      [self.navigationController pushViewController:detailViewController animated:YES];
      */
-    [delegate didSelectChoice:index value:indexPath.row];
+    [delegate didSelectChoice:index value:(int)indexPath.row];
     [self.navigationController popViewControllerAnimated:YES];
 }
 
