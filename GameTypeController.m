@@ -60,10 +60,16 @@
     return 1;
 }
 
+int number_of_presets(midend* me) {
+    // Return the number of rows in the section.
+    int n = 0;
+    struct preset_menu *menu = midend_get_presets(me, &n);
+    return menu->n_entries;
+}
+
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    // Return the number of rows in the section.
-    return midend_num_presets(me) + 1;
+    return number_of_presets(me) + 1;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -73,10 +79,9 @@
     UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
     
     // Configure the cell...
-    if (indexPath.row < midend_num_presets(me)) {
-        char *name;
-        game_params *params;
-        midend_fetch_preset(me, indexPath.row, &name, &params);
+    struct preset_menu *menu = midend_get_presets(me, 0);
+    if (indexPath.row < menu->n_entries) {
+        char *name = menu->entries[indexPath.row].title;
         cell.textLabel.text = [NSString stringWithUTF8String:name];
         if (indexPath.row == midend_which_preset(me)) {
             cell.accessoryType = UITableViewCellAccessoryCheckmark;
@@ -148,10 +153,9 @@
      // Pass the selected object to the new view controller.
      [self.navigationController pushViewController:detailViewController animated:YES];
      */
-    if (indexPath.row < midend_num_presets(me)) {
-        char *name;
-        game_params *params;
-        midend_fetch_preset(me, indexPath.row, &name, &params);
+    struct preset_menu *menu = midend_get_presets(me, 0);
+    if (indexPath.row < menu->n_entries) {
+        game_params *params = menu->entries[indexPath.row].params;
         midend_set_params(me, params);
         [gameview startNewGame];
         // bit of a hack here, gameview.nextResponder is actually the view controller we want
@@ -166,7 +170,7 @@
 
 - (void)didApply:(config_item *)config
 {
-    char *msg = midend_set_config(me, CFG_SETTINGS, config);
+    const char *msg = midend_set_config(me, CFG_SETTINGS, config);
     if (msg) {
         [[[UIAlertView alloc] initWithTitle:@"Puzzles" message:[NSString stringWithUTF8String:msg] delegate:nil cancelButtonTitle:@"Close" otherButtonTitles:nil] show];
     } else {
