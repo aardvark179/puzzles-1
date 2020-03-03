@@ -121,7 +121,9 @@ static bool saveGameRead(void *ctx, void *buf, int len)
             srctx.pos = 0;
             const char *msg = midend_deserialise(me, saveGameRead, &srctx);
             if (msg) {
-                [[[UIAlertView alloc] initWithTitle:@"Puzzles" message:[NSString stringWithUTF8String:msg] delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
+                UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Puzzles" message:[NSString stringWithUTF8String:msg] preferredStyle:UIAlertControllerStyleAlert];
+                [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleCancel handler:nil]];
+                [navigationController presentViewController:alert animated:NO completion:nil];
                 [self startNewGame];
             } else if (!inprogress) {
                 [self startNewGame];
@@ -646,7 +648,7 @@ static void saveGameWrite(void *ctx, const void *buf, int len)
 @end
 
 static void ios_draw_text(void *handle, int x, int y, int fonttype,
-                          int fontsize, int align, int colour, char *text)
+                          int fontsize, int align, int colour, const char *text)
 {
     frontend *fe = (frontend *)handle;
     GameView *gv = (__bridge GameView *)(fe->gv);
@@ -780,7 +782,7 @@ static void ios_end_draw(void *handle)
 {
 }
 
-static void ios_status_bar(void *handle, char *text)
+static void ios_status_bar(void *handle, const char *text)
 {
     frontend *fe = (frontend *)handle;
     GameView *gv = (__bridge GameView *)(fe->gv);

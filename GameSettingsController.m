@@ -168,9 +168,10 @@
     return cell;
 }
 
-- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
-{
-    [self.tableView reloadData];
+- (void)traitCollectionDidChange:(UITraitCollection *)previousTraitCollection {
+    if (previousTraitCollection.horizontalSizeClass != [self traitCollection].horizontalSizeClass || previousTraitCollection.verticalSizeClass != [self traitCollection].verticalSizeClass) {
+        [self.tableView reloadData];
+    }
 }
 
 /*
@@ -254,7 +255,7 @@
             NSArray *choices = choiceText[indexPath.row];
             int value = config_items[indexPath.row].u.choices.selected;
             NSString *title = [NSString stringWithUTF8String:config_items[indexPath.row].name];
-            GameSettingsChoiceController *gscc = [[GameSettingsChoiceController alloc] initWithGame:thegame index:indexPath.row choices:choices value:value title:title delegate:self];
+            GameSettingsChoiceController *gscc = [[GameSettingsChoiceController alloc] initWithGame:thegame index:(int)indexPath.row choices:choices value:value title:title delegate:self];
             [self.navigationController pushViewController:gscc animated:YES];
         }
     }

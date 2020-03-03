@@ -172,7 +172,9 @@ int number_of_presets(midend* me) {
 {
     const char *msg = midend_set_config(me, CFG_SETTINGS, config);
     if (msg) {
-        [[[UIAlertView alloc] initWithTitle:@"Puzzles" message:[NSString stringWithUTF8String:msg] delegate:nil cancelButtonTitle:@"Close" otherButtonTitles:nil] show];
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Puzzles" message:[NSString stringWithUTF8String:msg] preferredStyle:UIAlertControllerStyleAlert];
+        [alert addAction:[UIAlertAction actionWithTitle:@"Close" style:UIAlertActionStyleCancel handler:nil]];
+        [self presentViewController:alert animated:NO completion:nil];
     } else {
         [gameview startNewGame];
         // bit of a hack here, gameview.nextResponder is actually the view controller we want
