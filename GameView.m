@@ -81,7 +81,7 @@ struct StringReadContext {
     int pos;
 };
 
-static int saveGameRead(void *ctx, void *buf, int len)
+static bool saveGameRead(void *ctx, void *buf, int len)
 {
     struct StringReadContext *srctx = (struct StringReadContext *)ctx;
     NSString *save = (__bridge NSString *)(srctx->save);
@@ -184,7 +184,7 @@ static int saveGameRead(void *ctx, void *buf, int len)
     });
 }
 
-static void saveGameWrite(void *ctx, void *buf, int len)
+static void saveGameWrite(void *ctx, const void *buf, int len)
 {
     NSMutableString *save = (__bridge NSMutableString *)(ctx);
     [save appendString:[[NSString alloc] initWithBytes:buf length:len encoding:NSUTF8StringEncoding]];
@@ -207,7 +207,7 @@ static void saveGameWrite(void *ctx, void *buf, int len)
         return;
     }
     CGFloat toolbar_height = 44;
-    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone && UIInterfaceOrientationIsLandscape([UIDevice currentDevice].orientation)) {
+    if (self.traitCollection.verticalSizeClass == UIUserInterfaceSizeClassCompact) {
         toolbar_height = 32;
     }
     int top_margin = IOS7() ? (20+44) : 0;
@@ -220,12 +220,12 @@ static void saveGameWrite(void *ctx, void *buf, int len)
     } else {
         toolbar = [[UIToolbar alloc] initWithFrame:r];
         NSArray *items = @[
-            [[UIBarButtonItem alloc] initWithTitle:@"Game" style:UIBarButtonItemStyleBordered target:self action:@selector(doGameMenu)],
+            [[UIBarButtonItem alloc] initWithTitle:@"Game" style:UIBarButtonItemStylePlain target:self action:@selector(doGameMenu)],
             [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil],
             [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemUndo target:self action:@selector(doUndo)],
             [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRedo target:self action:@selector(doRedo)],
             [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil],
-            [[UIBarButtonItem alloc] initWithTitle:@"Type" style:UIBarButtonItemStyleBordered target:self action:@selector(doType)],
+            [[UIBarButtonItem alloc] initWithTitle:@"Type" style:UIBarButtonItemStylePlain target:self action:@selector(doType)],
         ];
         [toolbar setItems:items];
         if (!IOS7()) {
@@ -311,7 +311,7 @@ static void saveGameWrite(void *ctx, void *buf, int len)
         } else {
             game_toolbar.frame = r;
         }
-        UIBarButtonItemStyle style = ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPhone && (main_button_count + extra_button_count) > 9) ? UIBarButtonItemStylePlain : UIBarButtonItemStyleBordered;
+        UIBarButtonItemStyle style = UIBarButtonItemStylePlain;
         NSMutableArray *items = [[NSMutableArray alloc] init];
         [items addObject:[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil]];
         [items addObject:[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil]];
@@ -499,19 +499,19 @@ static void saveGameWrite(void *ctx, void *buf, int len)
     if (ourgame == &net) {
         if (sender == buttons[@"Centre"]) {
             if (self.net_centre_mode) {
-                sender.style = UIBarButtonItemStyleBordered;
+                sender.style = UIBarButtonItemStylePlain;
             } else {
                 sender.style = UIBarButtonItemStyleDone;
-                ((UIBarButtonItem *)buttons[@"Shift"]).style = UIBarButtonItemStyleBordered;
+                ((UIBarButtonItem *)buttons[@"Shift"]).style = UIBarButtonItemStylePlain;
             }
             return;
         }
         if (sender == buttons[@"Shift"]) {
             if (self.net_shift_mode) {
-                sender.style = UIBarButtonItemStyleBordered;
+                sender.style = UIBarButtonItemStylePlain;
             } else {
                 sender.style = UIBarButtonItemStyleDone;
-                ((UIBarButtonItem *)buttons[@"Centre"]).style = UIBarButtonItemStyleBordered;
+                ((UIBarButtonItem *)buttons[@"Centre"]).style = UIBarButtonItemStylePlain;
             }
             return;
         }
@@ -549,34 +549,34 @@ static void saveGameWrite(void *ctx, void *buf, int len)
 
 - (void)doGameMenu
 {
-    UIActionSheet *gameMenu;
+    UIAlertController *gameMenu = [UIAlertController alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+    [gameMenu addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {}]];
+    [gameMenu addAction:[UIAlertAction actionWithTitle:@"New Game" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
+        [self doNewGame];
+    }]];
+    [gameMenu addAction:[UIAlertAction actionWithTitle:@"Specific Game" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [self doSpecificGame];
+    }]];
+    [gameMenu addAction:[UIAlertAction actionWithTitle:@"Specific Random Seed" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [self doSpecificSeed];
+    }]];
+    [gameMenu addAction:[UIAlertAction actionWithTitle:@"Restart" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [self doRestart];
+    }]];
     if (ourgame->can_solve) {
-        gameMenu = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"New game" otherButtonTitles:@"Specific game", @"Specific Random Seed", @"Restart", @"Solve", nil];
-    } else {
-        gameMenu = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"New game" otherButtonTitles:@"Specific game", @"Specific Random Seed", @"Restart", nil];
+        [gameMenu addAction:[UIAlertAction actionWithTitle:@"Solve" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            [self doSolve];
+        }]];
     }
+    
+    UIPopoverPresentationController *popPresenter = [gameMenu popoverPresentationController];
+    popPresenter.barButtonItem = toolbar.items[0];
+    
+    [navigationController presentViewController:gameMenu animated:YES completion:nil];
     // Avoid doing this because on the iPad, the popover will automatically add the toolbar to the list of passthrough
     // views, causing unwanted effects if you click on other toolbar buttons before the popover dismisses.
     // See http://stackoverflow.com/questions/5448987/ipads-uiactionsheet-showing-multiple-times
     //[gameMenu showFromBarButtonItem:toolbar.items[0] animated:YES];
-    [gameMenu showFromRect:CGRectIntersection(toolbar.frame, CGRectMake(0, 0, 60, self.frame.size.height)) inView:self animated:YES];
-}
-
-- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
-{
-    switch (buttonIndex) {
-        case 0: [self doNewGame]; break;
-        case 1: [self doSpecificGame]; break;
-        case 2: [self doSpecificSeed]; break;
-        case 3: [self doRestart]; break;
-        case 4:
-            if (ourgame->can_solve) {
-                [self doSolve];
-            } else {
-                // index 4 referns to Cancel button
-            }
-            break;
-    }
 }
 
 - (void)doNewGame
@@ -604,7 +604,9 @@ static void saveGameWrite(void *ctx, void *buf, int len)
 {
     const char *msg = midend_game_id(me, config[0].name);
     if (msg) {
-        [[[UIAlertView alloc] initWithTitle:@"Puzzles" message:[NSString stringWithUTF8String:msg] delegate:nil cancelButtonTitle:@"Close" otherButtonTitles:nil] show];
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Puzzles" message:[NSString stringWithUTF8String:msg] preferredStyle:UIAlertControllerStyleAlert];
+        [alert addAction:[UIAlertAction actionWithTitle:@"Close" style:UIAlertActionStyleCancel handler:nil]];
+        [navigationController presentViewController:alert animated:NO completion:nil];
         return;
     }
     [self startNewGame];
@@ -630,7 +632,9 @@ static void saveGameWrite(void *ctx, void *buf, int len)
 {
     const char *msg = midend_solve(me);
     if (msg) {
-        [[[UIAlertView alloc] initWithTitle:@"Puzzles" message:[NSString stringWithUTF8String:msg] delegate:nil cancelButtonTitle:@"Close" otherButtonTitles:nil] show];
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Puzzles" message:[NSString stringWithUTF8String:msg] preferredStyle:UIAlertControllerStyleAlert];
+        [alert addAction:[UIAlertAction actionWithTitle:@"Close" style:UIAlertActionStyleCancel handler:nil]];
+        [navigationController presentViewController:alert animated:NO completion:nil];
     }
 }
 
