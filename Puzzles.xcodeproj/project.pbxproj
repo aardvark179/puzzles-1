@@ -828,6 +828,11 @@
 			attributes = {
 				LastUpgradeCheck = 1130;
 				ORGANIZATIONNAME = "Greg Hewgill";
+				TargetAttributes = {
+					3701DC0416E730ED00896D7D = {
+						DevelopmentTeam = 84ZN9RM295;
+					};
+				};
 			};
 			buildConfigurationList = 3701DC0016E730ED00896D7D /* Build configuration list for PBXProject "Puzzles" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -1212,6 +1217,7 @@
 		3701DC2C16E730ED00896D7D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				DEVELOPMENT_TEAM = 84ZN9RM295;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Puzzles-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -1222,7 +1228,7 @@
 				INFOPLIST_FILE = "Puzzles-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				OTHER_CFLAGS = "";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.hewgill.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.aardvark179.Puzzles-dev";
 				PRODUCT_NAME = "$(TARGET_NAME)-dev";
 				WRAPPER_EXTENSION = app;
 			};
@@ -1231,12 +1237,13 @@
 		3701DC2D16E730ED00896D7D /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				DEVELOPMENT_TEAM = 84ZN9RM295;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Puzzles-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = COMBINED;
 				INFOPLIST_FILE = "Puzzles-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.hewgill.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_BUNDLE_IDENTIFIER = com.aardvark179.Puzzles;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
