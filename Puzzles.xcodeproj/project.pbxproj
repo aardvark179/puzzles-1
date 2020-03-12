@@ -11,12 +11,18 @@
 		115DFEB5240C0FAA00BC5FF8 /* sort.c in Sources */ = {isa = PBXBuildFile; fileRef = 115DFEB4240C0FAA00BC5FF8 /* sort.c */; };
 		115DFEB7240C0FEA00BC5FF8 /* findloop.c in Sources */ = {isa = PBXBuildFile; fileRef = 115DFEB6240C0FEA00BC5FF8 /* findloop.c */; };
 		115DFEB9240C156800BC5FF8 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 115DFEB8240C156700BC5FF8 /* Launch Screen.storyboard */; };
+		115DFEBB240FCC5600BC5FF8 /* GameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 115DFEBA240FCC5600BC5FF8 /* GameView.swift */; };
+		115DFEBD240FE30900BC5FF8 /* GameListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 115DFEBC240FE30900BC5FF8 /* GameListViewController.swift */; };
+		115DFEBF24100C1400BC5FF8 /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 115DFEBE24100C1400BC5FF8 /* GameViewController.swift */; };
+		115DFEC32416507100BC5FF8 /* GameTypeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 115DFEC22416507100BC5FF8 /* GameTypeController.swift */; };
+		115DFEC5241656F500BC5FF8 /* GameHelpController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 115DFEC4241656F500BC5FF8 /* GameHelpController.swift */; };
+		115DFEC724199B9400BC5FF8 /* GameSettingsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 115DFEC624199B9400BC5FF8 /* GameSettingsController.swift */; };
+		115DFEC9241A598A00BC5FF8 /* GameSettingsChoiceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 115DFEC8241A598A00BC5FF8 /* GameSettingsChoiceController.swift */; };
+		11800765241C008500E7658A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11800764241C008500E7658A /* AppDelegate.swift */; };
 		3701DC0916E730ED00896D7D /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3701DC0816E730ED00896D7D /* UIKit.framework */; };
 		3701DC0B16E730ED00896D7D /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3701DC0A16E730ED00896D7D /* Foundation.framework */; };
 		3701DC0D16E730ED00896D7D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3701DC0C16E730ED00896D7D /* CoreGraphics.framework */; };
 		3701DC1316E730ED00896D7D /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 3701DC1116E730ED00896D7D /* InfoPlist.strings */; };
-		3701DC1516E730ED00896D7D /* ios.m in Sources */ = {isa = PBXBuildFile; fileRef = 3701DC1416E730ED00896D7D /* ios.m */; };
-		3701DC1916E730ED00896D7D /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 3701DC1816E730ED00896D7D /* AppDelegate.m */; };
 		3701DC1B16E730ED00896D7D /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 3701DC1A16E730ED00896D7D /* Default.png */; };
 		3701DC1D16E730ED00896D7D /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3701DC1C16E730ED00896D7D /* Default@2x.png */; };
 		3701DC1F16E730ED00896D7D /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3701DC1E16E730ED00896D7D /* Default-568h@2x.png */; };
@@ -239,16 +245,23 @@
 		115DFEB4240C0FAA00BC5FF8 /* sort.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sort.c; sourceTree = "<group>"; };
 		115DFEB6240C0FEA00BC5FF8 /* findloop.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = findloop.c; sourceTree = "<group>"; };
 		115DFEB8240C156700BC5FF8 /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
+		115DFEBA240FCC5600BC5FF8 /* GameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameView.swift; sourceTree = SOURCE_ROOT; };
+		115DFEBC240FE30900BC5FF8 /* GameListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameListViewController.swift; sourceTree = SOURCE_ROOT; };
+		115DFEBE24100C1400BC5FF8 /* GameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = SOURCE_ROOT; };
+		115DFEC024100D1700BC5FF8 /* Puzzles-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Puzzles-Bridging-Header.h"; sourceTree = SOURCE_ROOT; };
+		115DFEC12411528700BC5FF8 /* frontend.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = frontend.h; sourceTree = "<group>"; };
+		115DFEC22416507100BC5FF8 /* GameTypeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameTypeController.swift; sourceTree = SOURCE_ROOT; };
+		115DFEC4241656F500BC5FF8 /* GameHelpController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameHelpController.swift; sourceTree = SOURCE_ROOT; };
+		115DFEC624199B9400BC5FF8 /* GameSettingsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameSettingsController.swift; sourceTree = SOURCE_ROOT; };
+		115DFEC8241A598A00BC5FF8 /* GameSettingsChoiceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameSettingsChoiceController.swift; sourceTree = SOURCE_ROOT; };
+		11800764241C008500E7658A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = SOURCE_ROOT; };
 		3701DC0516E730ED00896D7D /* Puzzles-dev.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Puzzles-dev.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3701DC0816E730ED00896D7D /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		3701DC0A16E730ED00896D7D /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		3701DC0C16E730ED00896D7D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		3701DC1016E730ED00896D7D /* Puzzles-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Puzzles-Info.plist"; sourceTree = SOURCE_ROOT; };
 		3701DC1216E730ED00896D7D /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		3701DC1416E730ED00896D7D /* ios.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ios.m; sourceTree = SOURCE_ROOT; };
 		3701DC1616E730ED00896D7D /* Puzzles-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Puzzles-Prefix.pch"; sourceTree = SOURCE_ROOT; };
-		3701DC1716E730ED00896D7D /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = SOURCE_ROOT; };
-		3701DC1816E730ED00896D7D /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = SOURCE_ROOT; };
 		3701DC1A16E730ED00896D7D /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = SOURCE_ROOT; };
 		3701DC1C16E730ED00896D7D /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = SOURCE_ROOT; };
 		3701DC1E16E730ED00896D7D /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = SOURCE_ROOT; };
@@ -498,6 +511,7 @@
 		3701DBFC16E730ED00896D7D = {
 			isa = PBXGroup;
 			children = (
+				115DFEC12411528700BC5FF8 /* frontend.h */,
 				115DFEB8240C156700BC5FF8 /* Launch Screen.storyboard */,
 				37DDFDB216F45C53007B6287 /* CoreText.framework */,
 				371ADFA216F432CD00A529A2 /* QuartzCore.framework */,
@@ -529,14 +543,19 @@
 		3701DC0E16E730ED00896D7D /* Puzzles */ = {
 			isa = PBXGroup;
 			children = (
-				3701DC1716E730ED00896D7D /* AppDelegate.h */,
-				3701DC1816E730ED00896D7D /* AppDelegate.m */,
 				3701DCA916E9D93E00896D7D /* GameListViewController.h */,
+				115DFEBC240FE30900BC5FF8 /* GameListViewController.swift */,
 				3701DCAA16E9D93F00896D7D /* GameListViewController.m */,
 				3701DCAC16E9DBC000896D7D /* GameViewController.h */,
 				3701DCAD16E9DBC100896D7D /* GameViewController.m */,
+				115DFEBE24100C1400BC5FF8 /* GameViewController.swift */,
+				115DFEC024100D1700BC5FF8 /* Puzzles-Bridging-Header.h */,
 				3701DCA616E85D5D00896D7D /* GameView.h */,
 				3701DCA716E85D5D00896D7D /* GameView.m */,
+				115DFEC22416507100BC5FF8 /* GameTypeController.swift */,
+				115DFEC4241656F500BC5FF8 /* GameHelpController.swift */,
+				115DFEC624199B9400BC5FF8 /* GameSettingsController.swift */,
+				115DFEC8241A598A00BC5FF8 /* GameSettingsChoiceController.swift */,
 				3701DD2D16EDBC9E00896D7D /* GameTypeController.h */,
 				3701DD2E16EDBC9E00896D7D /* GameTypeController.m */,
 				3701DD3016EDC7F100896D7D /* GameSettingsController.h */,
@@ -547,6 +566,8 @@
 				3701DD3916F3959300896D7D /* GameHelpController.m */,
 				3701DC2E16E7330700896D7D /* Core */,
 				3701DC0F16E730ED00896D7D /* Supporting Files */,
+				115DFEBA240FCC5600BC5FF8 /* GameView.swift */,
+				11800764241C008500E7658A /* AppDelegate.swift */,
 			);
 			path = Puzzles;
 			sourceTree = "<group>";
@@ -556,7 +577,6 @@
 			children = (
 				3701DC1016E730ED00896D7D /* Puzzles-Info.plist */,
 				3701DC1116E730ED00896D7D /* InfoPlist.strings */,
-				3701DC1416E730ED00896D7D /* ios.m */,
 				3701DC1616E730ED00896D7D /* Puzzles-Prefix.pch */,
 				3701DC1A16E730ED00896D7D /* Default.png */,
 				3701DC1C16E730ED00896D7D /* Default@2x.png */,
@@ -831,6 +851,7 @@
 				TargetAttributes = {
 					3701DC0416E730ED00896D7D = {
 						DevelopmentTeam = 84ZN9RM295;
+						LastSwiftMigration = 1130;
 					};
 				};
 			};
@@ -1033,14 +1054,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3701DC1516E730ED00896D7D /* ios.m in Sources */,
-				3701DC1916E730ED00896D7D /* AppDelegate.m in Sources */,
 				3701DC6716E734A800896D7D /* blackbox.c in Sources */,
 				3701DC6816E734A800896D7D /* bridges.c in Sources */,
+				115DFEC32416507100BC5FF8 /* GameTypeController.swift in Sources */,
+				115DFEC9241A598A00BC5FF8 /* GameSettingsChoiceController.swift in Sources */,
+				115DFEBF24100C1400BC5FF8 /* GameViewController.swift in Sources */,
 				3701DC6916E734A800896D7D /* combi.c in Sources */,
 				3701DC6A16E734A800896D7D /* cube.c in Sources */,
 				3701DC6B16E734A800896D7D /* divvy.c in Sources */,
 				3701DC6C16E734A800896D7D /* dominosa.c in Sources */,
+				11800765241C008500E7658A /* AppDelegate.swift in Sources */,
 				3701DC6D16E734A800896D7D /* drawing.c in Sources */,
 				3701DC6E16E734A800896D7D /* dsf.c in Sources */,
 				3701DC6F16E734A800896D7D /* fifteen.c in Sources */,
@@ -1067,6 +1090,7 @@
 				3701DC8416E734A800896D7D /* net.c in Sources */,
 				3701DC8516E734A800896D7D /* netslide.c in Sources */,
 				3701DC8616E734A800896D7D /* nullgame.c in Sources */,
+				115DFEBB240FCC5600BC5FF8 /* GameView.swift in Sources */,
 				3701DC8716E734A800896D7D /* pattern.c in Sources */,
 				3701DC8816E734A800896D7D /* pearl.c in Sources */,
 				115DFEB5240C0FAA00BC5FF8 /* sort.c in Sources */,
@@ -1085,6 +1109,7 @@
 				3701DC9516E734A800896D7D /* tents.c in Sources */,
 				3701DC9616E734A800896D7D /* towers.c in Sources */,
 				3701DC9716E734A800896D7D /* tree234.c in Sources */,
+				115DFEC724199B9400BC5FF8 /* GameSettingsController.swift in Sources */,
 				3701DC9816E734A800896D7D /* twiddle.c in Sources */,
 				3701DC9916E734A800896D7D /* undead.c in Sources */,
 				3701DC9A16E734A800896D7D /* unequal.c in Sources */,
@@ -1093,10 +1118,12 @@
 				3701DCA516E7391800896D7D /* printing.c in Sources */,
 				3701DCA816E85D5D00896D7D /* GameView.m in Sources */,
 				3701DCAB16E9D93F00896D7D /* GameListViewController.m in Sources */,
+				115DFEBD240FE30900BC5FF8 /* GameListViewController.swift in Sources */,
 				3701DCAE16E9DBC100896D7D /* GameViewController.m in Sources */,
 				3701DD2F16EDBC9F00896D7D /* GameTypeController.m in Sources */,
 				3701DD3216EDC7F200896D7D /* GameSettingsController.m in Sources */,
 				3701DD3516EEEC9A00896D7D /* GameSettingsChoiceController.m in Sources */,
+				115DFEC5241656F500BC5FF8 /* GameHelpController.swift in Sources */,
 				3701DD3A16F3959400896D7D /* GameHelpController.m in Sources */,
 				115DFEB32409527200BC5FF8 /* matching.c in Sources */,
 				3786A3271AA83A9000B052ED /* flood.c in Sources */,
@@ -1217,6 +1244,7 @@
 		3701DC2C16E730ED00896D7D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				DEVELOPMENT_TEAM = 84ZN9RM295;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Puzzles-Prefix.pch";
@@ -1227,9 +1255,13 @@
 				);
 				INFOPLIST_FILE = "Puzzles-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_CFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.aardvark179.Puzzles-dev";
 				PRODUCT_NAME = "$(TARGET_NAME)-dev";
+				SWIFT_OBJC_BRIDGING_HEADER = "Puzzles-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -1237,14 +1269,18 @@
 		3701DC2D16E730ED00896D7D /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				DEVELOPMENT_TEAM = 84ZN9RM295;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Puzzles-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = COMBINED;
 				INFOPLIST_FILE = "Puzzles-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.aardvark179.Puzzles;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Puzzles-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

@@ -16,28 +16,9 @@
 
 #include "puzzles.h"
 
-typedef float rgb[3];
-
-struct frontend {
-    void *gv;
-    rgb *colours;
-    int ncolours;
-    BOOL clipping;
-};
+#include "frontend.h"
 
 extern const struct drawing_api ios_drawing;
-
-// Game instances we will want to refer to
-extern const game filling;
-extern const game keen;
-extern const game map;
-extern const game net;
-extern const game pattern;
-extern const game solo;
-extern const game towers;
-extern const game undead;
-extern const game unequal;
-extern const game untangle;
 
 const int ButtonDown[3] = {LEFT_BUTTON,  RIGHT_BUTTON,  MIDDLE_BUTTON};
 const int ButtonDrag[3] = {LEFT_DRAG,    RIGHT_DRAG,    MIDDLE_DRAG};
@@ -112,8 +93,8 @@ static bool saveGameRead(void *ctx, void *buf, int len)
             setenv(buf, value, 1);
         }
         me = midend_new(&fe, ourgame, &ios_drawing, &fe);
-        fe.colours = (rgb *)midend_colours(me, &fe.ncolours);
-        self.backgroundColor = [UIColor colorWithRed:fe.colours[0][0] green:fe.colours[0][1] blue:fe.colours[0][2] alpha:1];
+        fe.colours = midend_colours(me, &fe.ncolours);
+        self.backgroundColor = [UIColor colorWithRed:fe.colours[0] green:fe.colours[1] blue:fe.colours[2] alpha:1];
         buttons = [[NSMutableDictionary alloc] init];
         if (saved) {
             struct StringReadContext srctx;
@@ -655,7 +636,7 @@ static void ios_draw_text(void *handle, int x, int y, int fonttype,
     CFStringRef str = CFStringCreateWithBytes(NULL, (UInt8 *)text, strlen(text), kCFStringEncodingUTF8, false);
     CTFontRef font = CTFontCreateWithName(CFSTR("Helvetica"), fontsize, NULL);
     CGColorSpaceRef cs = CGColorSpaceCreateDeviceRGB();
-    CGFloat components[] = {fe->colours[colour][0], fe->colours[colour][1], fe->colours[colour][2], 1};
+    CGFloat components[] = {fe->colours[colour * 3 + 0], fe->colours[colour * 3 + 1], fe->colours[colour * 3 + 2], 1};
     CGColorRef color = CGColorCreate(cs, components);
     CFStringRef attr_keys[] = {kCTFontAttributeName, kCTForegroundColorAttributeName};
     CFTypeRef attr_values[] = {font,                 color};
@@ -698,7 +679,7 @@ static void ios_draw_rect(void *handle, int x, int y, int w, int h, int colour)
 {
     frontend *fe = (frontend *)handle;
     GameView *gv = (__bridge GameView *)(fe->gv);
-    CGContextSetRGBFillColor(gv.bitmap, fe->colours[colour][0], fe->colours[colour][1], fe->colours[colour][2], 1);
+    CGContextSetRGBFillColor(gv.bitmap, fe->colours[colour * 3 + 0], fe->colours[colour * 3 + 1], fe->colours[colour * 3 + 2], 1);
     CGContextFillRect(gv.bitmap, CGRectMake(x, y, w, h));
 }
 
@@ -706,7 +687,7 @@ static void ios_draw_line(void *handle, int x1, int y1, int x2, int y2, int colo
 {
     frontend *fe = (frontend *)handle;
     GameView *gv = (__bridge GameView *)(fe->gv);
-    CGContextSetRGBStrokeColor(gv.bitmap, fe->colours[colour][0], fe->colours[colour][1], fe->colours[colour][2], 1);
+    CGContextSetRGBStrokeColor(gv.bitmap, fe->colours[colour * 3 + 0], fe->colours[colour * 3 + 1], fe->colours[colour * 3 + 2], 1);
     CGContextBeginPath(gv.bitmap);
     CGContextMoveToPoint(gv.bitmap, x1, y1);
     CGContextAddLineToPoint(gv.bitmap, x2, y2);
@@ -718,7 +699,7 @@ static void ios_draw_polygon(void *handle, int *coords, int npoints,
 {
     frontend *fe = (frontend *)handle;
     GameView *gv = (__bridge GameView *)(fe->gv);
-    CGContextSetRGBStrokeColor(gv.bitmap, fe->colours[outlinecolour][0], fe->colours[outlinecolour][1], fe->colours[outlinecolour][2], 1);
+    CGContextSetRGBStrokeColor(gv.bitmap, fe->colours[outlinecolour * 3 + 0], fe->colours[outlinecolour * 3 + 1], fe->colours[outlinecolour * 3 + 2], 1);
     CGContextBeginPath(gv.bitmap);
     CGContextMoveToPoint(gv.bitmap, coords[0], coords[1]);
     for (int i = 1; i < npoints; i++) {
@@ -727,7 +708,7 @@ static void ios_draw_polygon(void *handle, int *coords, int npoints,
     CGContextAddLineToPoint(gv.bitmap, coords[0], coords[1]);
     CGPathDrawingMode mode = kCGPathStroke;
     if (fillcolour >= 0) {
-        CGContextSetRGBFillColor(gv.bitmap, fe->colours[fillcolour][0], fe->colours[fillcolour][1], fe->colours[fillcolour][2], 1);
+        CGContextSetRGBFillColor(gv.bitmap, fe->colours[fillcolour * 3 + 0], fe->colours[fillcolour * 3 + 1], fe->colours[fillcolour * 3 + 2], 1);
         mode = kCGPathFillStroke;
     }
     CGContextDrawPath(gv.bitmap, mode);
@@ -739,10 +720,10 @@ static void ios_draw_circle(void *handle, int cx, int cy, int radius,
     frontend *fe = (frontend *)handle;
     GameView *gv = (__bridge GameView *)(fe->gv);
     if (fillcolour >= 0) {
-        CGContextSetRGBFillColor(gv.bitmap, fe->colours[fillcolour][0], fe->colours[fillcolour][1], fe->colours[fillcolour][2], 1);
+        CGContextSetRGBFillColor(gv.bitmap, fe->colours[fillcolour * 3 + 0], fe->colours[fillcolour * 3 + 1], fe->colours[fillcolour * 3 + 2], 1);
         CGContextFillEllipseInRect(gv.bitmap, CGRectMake(cx-radius+1, cy-radius+1, radius*2-1, radius*2-1));
     }
-    CGContextSetRGBStrokeColor(gv.bitmap, fe->colours[outlinecolour][0], fe->colours[outlinecolour][1], fe->colours[outlinecolour][2], 1);
+    CGContextSetRGBStrokeColor(gv.bitmap, fe->colours[outlinecolour * 3 + 0], fe->colours[outlinecolour * 3 + 1], fe->colours[outlinecolour * 3 + 2], 1);
     CGContextStrokeEllipseInRect(gv.bitmap, CGRectMake(cx-radius+1, cy-radius+1, radius*2-1, radius*2-1));
 }
 
@@ -880,7 +861,13 @@ void fatal(const char *fmt, ...)
 
 void frontend_default_colour(frontend *fe, float *output)
 {
-    output[0] = output[1] = output[2] = 0.8f;
+    CGFloat red;
+    CGFloat green;
+    CGFloat blue;
+    [[UIColor systemGreenColor] getRed:&red green:&green blue:&blue alpha:nil];
+    output[0] = red;
+    output[1] = green;
+    output[2] = blue;
 }
 
 void get_random_seed(void **randseed, int *randseedsize)
