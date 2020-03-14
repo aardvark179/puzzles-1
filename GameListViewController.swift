@@ -187,16 +187,16 @@ class GameListViewController : UICollectionViewController, GameViewControllerSav
     func saveGameViewController() -> GameViewController? {
         let lastGame = UserDefaults.standard.string(forKey: "lastgame")
         if (lastGame != nil) {
-            var i = Int(gamecount)
+            var i = Int(gamecount) - 1
             while (i >= 0) {
-                let gameName = String(cString: swift_gamelist![i].name)
+                let gameName = String(cString: (swift_gamelist![i]!.pointee as game).name)
                 if (gameName == lastGame) {
                     break
                 }
                 i -= 1
             }
             if (i >= 0) {
-                return gameViewControllerForGame(game: &swift_gamelist![i])
+                return gameViewControllerForGame(game: swift_gamelist![i] as! UnsafeMutablePointer<game>)
             }
         }
         return nil
@@ -217,7 +217,7 @@ class GameListViewController : UICollectionViewController, GameViewControllerSav
                 saved = nil
             }
         }
-        return GameViewController(game: game, saved: saved!, inProgress: inProgress, saver: self)
+        return GameViewController(game: game, saved: saved, inProgress: inProgress, saver: self)
     }
     
     override func viewDidLoad() {
@@ -270,7 +270,7 @@ class GameListViewController : UICollectionViewController, GameViewControllerSav
         let image = cell.viewWithTag(2) as! UIImageView
         let detail = cell.viewWithTag(3) as! UILabel
         let inProgress = cell.viewWithTag(4) as! UIImageView
-        let name = String(cString: swift_gamelist[indexPath.row].name)
+        let name = String(cString: swift_gamelist[indexPath.row]!.pointee.name)
         label.text = name
         detail.text = gameDescriptions[name]
         var iconName = name.replacingOccurrences(of: " ", with: "").lowercased()
@@ -287,8 +287,8 @@ class GameListViewController : UICollectionViewController, GameViewControllerSav
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let game = swift_gamelist[indexPath.row]
-        let name = String(cString: game.name)
-        let gvc = gameViewControllerForGame(game: &swift_gamelist[indexPath.row])
+        let name = String(cString: game!.pointee.name)
+        let gvc = gameViewControllerForGame(game: swift_gamelist[indexPath.row]!)
         navigationController?.pushViewController(gvc, animated: true)
         UserDefaults.standard.set(name, forKey: "lastgame")
     }

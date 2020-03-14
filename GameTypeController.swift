@@ -33,7 +33,8 @@ class GameTypeController : UITableViewController, GameSettingsDelegate {
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        number_of_presets(midend: midend) + 1
+        let i = number_of_presets(midend: midend) + 1
+        return i
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

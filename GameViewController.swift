@@ -16,12 +16,12 @@ protocol GameViewControllerSaver {
 class GameViewController : UIViewController {
     var theGame: UnsafeMutablePointer<game>
     var name: String = ""
-    var saved: String = ""
+    var saved: String?
     var initInProgress: Bool = false
     var gameView: GameView? = nil
     var saver: GameViewControllerSaver
     
-    init(game: UnsafeMutablePointer<game>, saved: String, inProgress:Bool, saver: GameViewControllerSaver) {
+    init(game: UnsafeMutablePointer<game>, saved: String?, inProgress:Bool, saver: GameViewControllerSaver) {
         self.theGame = game
         self.name = String.init(cString: game.pointee.name)
         self.saved = saved
@@ -42,6 +42,7 @@ class GameViewController : UIViewController {
     
     override func loadView() {
         self.gameView = GameView(nc: navigationController!, game: theGame, saved: saved, inProgess: initInProgress, frame: UIScreen.main.bounds)
+        self.view = self.gameView
     }
     
     override func viewDidLoad() {

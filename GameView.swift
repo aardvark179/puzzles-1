@@ -31,19 +31,19 @@ class GameView : UIView, GameSettingsDelegate {
     var nc: UINavigationController
     var theGame: UnsafeMutablePointer<game>
     var midend: OpaquePointer!
-    var fe: frontend = frontend(gv: nil, colours: nil, ncolours: 0, clipping: false)
+    var fe: frontend = frontend(gv: nil, colours: nil, ncolours: 0, clipping: false, activate_timer: {fe in attach_timer(fe: fe!)}, deactivate_timer: {fe in detach_timer(fe: fe!)})
     var usableFrame: CGRect!
     var gameRect: CGRect!
     var timer: Timer!
-    var gameToolbar: UIToolbar!
+    var gameToolbar: UIToolbar? = nil
     var touchState: Int = 0
     var touchXPoints: Int32 = 0
     var touchYPoints: Int32 = 0
     var touchXPixels: Int32 = 0
     var touchYPizels: Int32 = 0
     var touchButton: Int = 0
-    var touchTimer: Timer!
-    var toolbar: UIToolbar!
+    var touchTimer: Timer? = nil
+    var toolbar: UIToolbar?
     var buttons: Dictionary<String, UIBarButtonItem> = Dictionary<String, UIBarButtonItem>()
     var statusbar: UILabel?
     var bitmap: CGContext?
@@ -54,12 +54,12 @@ class GameView : UIView, GameSettingsDelegate {
         theGame = game
         super.init(frame: frame)
         fe.gv = bridge(obj: self)
-        midend = midend_new(&fe, theGame, nil, &fe);
+        midend = midend_new(&fe, theGame, &swift_drawing_api, bridge(obj: self));
         fe.colours = midend_colours(midend, &fe.ncolours);
         self.backgroundColor = UIColor.init(red: CGFloat(fe.colours![0]), green: CGFloat(fe.colours![1]), blue: CGFloat(fe.colours![2]), alpha: 1)
         if (saved != nil) {
             var ctx = StringReadConext(save: saved!, position: 0)
-            let msg = midend_deserialise(midend, {ctx, buffer, length in saveGameRead(ctx: ctx, buffer: buffer, length: length)}, &ctx)
+            let msg = midend_deserialise(midend, {ctx, buffer, length in saveGameRead(ctx: ctx, buffer: buffer, length: length)}, bridge(obj: ctx))
             if (msg != nil) {
                 let alert = UIAlertController(title: "Puzzles", message: String(cString: msg!), preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
@@ -143,7 +143,7 @@ class GameView : UIView, GameSettingsDelegate {
     
     fileprivate func buildToolbar(r: CGRect) {
         if (toolbar != nil) {
-            toolbar.frame = r
+            toolbar!.frame = r
         } else {
             toolbar = UIToolbar(frame: r)
             let items = [
@@ -152,12 +152,10 @@ class GameView : UIView, GameSettingsDelegate {
                 UIBarButtonItem(barButtonSystemItem: .undo,  target: self, action: #selector(doUndo)),
                 UIBarButtonItem(barButtonSystemItem: .redo, target: self, action: #selector(doRedo)),
                 UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil),
-                UIBarButtonItem(title: "Type", style: .plain, target: self,    action: #selector(doGameMenu)),
+                UIBarButtonItem(title: "Type", style: .plain, target: self,    action: #selector(doType)),
             ]
-            toolbar.setItems(items, animated: false)
-            
-            self.addSubview(toolbar)
-            
+            toolbar!.setItems(items, animated: false)
+            addSubview(toolbar!)
         }
     }
     
@@ -172,7 +170,7 @@ class GameView : UIView, GameSettingsDelegate {
                 self.addSubview(self.statusbar!)
             }
         } else {
-            self.statusbar!.removeFromSuperview()
+            self.statusbar?.removeFromSuperview()
             self.statusbar = nil
         }
     }
@@ -245,7 +243,7 @@ class GameView : UIView, GameSettingsDelegate {
             if (gameToolbar == nil) {
                 gameToolbar = UIToolbar(frame: r)
             } else {
-                gameToolbar.frame = r
+                gameToolbar?.frame = r
             }
             var items: Array<UIBarButtonItem> = Array()
             items.append(UIBarButtonItem(barButtonSystemItem: UIBarButtonItem.SystemItem.flexibleSpace, target: nil, action: nil))
@@ -269,25 +267,12 @@ class GameView : UIView, GameSettingsDelegate {
                 items.append(UIBarButtonItem(barButtonSystemItem: UIBarButtonItem.SystemItem.flexibleSpace, target: nil, action: nil))
             }
             items.append(UIBarButtonItem(barButtonSystemItem: UIBarButtonItem.SystemItem.flexibleSpace, target: nil, action: nil))
-            gameToolbar.items = items
-            addSubview(gameToolbar)
+            gameToolbar!.items = items
+            addSubview(gameToolbar!)
         } else {
-            gameToolbar.removeFromSuperview()
+            gameToolbar?.removeFromSuperview()
             gameToolbar = nil
         }
-        usableFrame = CGRect(x: 0, y: topMargin, width: self.frame.width, height: usableHeight)
-        let fw = Int32(frame.width * contentScaleFactor)
-        let fh = Int32(usableHeight * contentScaleFactor)
-        var w = fw
-        var h = fh
-        midend_size(midend, &w, &h, false)
-        
-        var gameRect = CGRect(x: CGFloat(fw - w)/2/contentScaleFactor, y: CGFloat(fh - h)/2/contentScaleFactor, width: CGFloat(w)/contentScaleFactor, height: CGFloat(h)/contentScaleFactor)
-        gameRect.origin.y += topMargin
-        let cs = CGColorSpaceCreateDeviceRGB()
-        bitmap = CGContext(data: nil, width: Int(w), height: Int(h), bitsPerComponent: 8, bytesPerRow: Int(w)*4, space: cs, bitmapInfo: CGImageAlphaInfo.noneSkipLast.rawValue)
-        midend_force_redraw(midend)
-        setNeedsDisplay()
     }
     
     override func draw(_ rect: CGRect) {
@@ -296,7 +281,9 @@ class GameView : UIView, GameSettingsDelegate {
         } else {
             let context = UIGraphicsGetCurrentContext()
             let image = bitmap?.makeImage()
-            context?.draw(image!, in: rect)
+            if (image != nil) {
+                context?.draw(image!, in: rect)
+            }
         }
     }
     
@@ -362,7 +349,7 @@ class GameView : UIView, GameSettingsDelegate {
         } else {
             if (touchState == 1) {
                 if (abs(xPoints + touchXPoints) >= 20 || abs(yPoints + touchYPoints) >= 20) {
-                    touchTimer.invalidate()
+                    touchTimer?.invalidate()
                     touchTimer = nil
                     midend_process_key(midend, touchXPixels, touchYPizels, ButtonDown[touchButton]);
                     touchState = 2;
@@ -394,13 +381,13 @@ class GameView : UIView, GameSettingsDelegate {
             midend_process_key(midend, touchXPixels, touchYPizels, ButtonUp[touchButton])
         }
         touchState = 0
-        touchTimer.invalidate()
+        touchTimer?.invalidate()
         touchTimer = nil
     }
     
     override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
         touchState = 0
-        touchTimer.invalidate()
+        touchTimer?.invalidate()
         touchTimer = nil
     }
     
@@ -486,10 +473,24 @@ class GameView : UIView, GameSettingsDelegate {
         let topMargin: CGFloat = 0
         var usableHeight = self.frame.height - toolbarHeight - topMargin
         
-        let r: CGRect = CGRect(x: 0, y: self.frame.height, width: self.frame.width, height: usableHeight)
+        let r: CGRect = CGRect(x: 0, y: topMargin + usableHeight, width: self.frame.width, height: toolbarHeight)
         
         buildToolbar(r: r)
         buildStatusBar(topMargin: topMargin, usableHeight: &usableHeight)
+        buildGameButtons(toolbarHeight: toolbarHeight, topMargin: topMargin, usableHeight: &usableHeight)
+        usableFrame = CGRect(x: 0, y: topMargin, width: self.frame.width, height: usableHeight)
+        let fw = Int32(frame.width * contentScaleFactor)
+        let fh = Int32(usableHeight * contentScaleFactor)
+        var w = fw
+        var h = fh
+        midend_size(midend, &w, &h, false)
+        
+        gameRect = CGRect(x: CGFloat(fw - w)/2/contentScaleFactor, y: CGFloat(fh - h)/2/contentScaleFactor, width: CGFloat(w)/contentScaleFactor, height: CGFloat(h)/contentScaleFactor)
+        gameRect.origin.y += topMargin
+        let cs = CGColorSpaceCreateDeviceRGB()
+        bitmap = CGContext(data: nil, width: Int(w), height: Int(h), bitsPerComponent: 8, bytesPerRow: Int(w)*4, space: cs, bitmapInfo: CGImageAlphaInfo.noneSkipLast.rawValue)
+        midend_force_redraw(midend)
+        setNeedsDisplay()
     }
     
     @objc func doGameMenu() {
@@ -609,7 +610,7 @@ let swift_blitter_save:  (@convention(c) (VoidPtr, OpaquePointer?, Int32, Int32)
 let swift_blitter_load:  (@convention(c) (VoidPtr, OpaquePointer?, Int32, Int32) -> Void) = { handle, blitter, x, y in blitterLoad(handle: handle, blitter: blitter, x: x, y: y)}
 let swift_text_fallback: (@convention(c) (VoidPtr, ConstCharPtrConstPtr, Int32) -> CharPtr) = { handle, strings, nStrings in textFallback(handle: handle, strings: strings, nStrings: nStrings)}
 
-let swift_drawing_api: drawing_api = drawing_api(
+var swift_drawing_api: drawing_api = drawing_api(
     draw_text: swift_draw_text,
     draw_rect: swift_draw_rect,
     draw_line: swift_draw_line,
@@ -637,7 +638,7 @@ let swift_drawing_api: drawing_api = drawing_api(
     draw_thick_line: nil)
 
 fileprivate func getGV(handle: VoidPtr) -> GameView {
-    return bridge(ptr: UnsafePointer<frontend>.init(OpaquePointer(handle))!.pointee.gv)
+    return bridge(ptr: UnsafeMutableRawPointer(OpaquePointer(handle))!)
 }
 fileprivate func rgb(gv: GameView, colour: Int32) -> [CGFloat] {
     return [CGFloat(gv.fe.colours![Int(colour) * 3 + 0]),
@@ -712,6 +713,7 @@ fileprivate func drawPolygon(handle: VoidPtr, coords: Int32Ptr, npoints: Int32, 
     if (fillcolour >=  0) {
         comps = rgb(gv: gv, colour: fillcolour)
         gv.bitmap!.setFillColor(red: comps[0], green: comps[1], blue: comps[2], alpha: 1)
+        gv.bitmap!.fillPath(using: .evenOdd)
     }
     gv.bitmap!.drawPath(using: fillcolour >= 0 ? CGPathDrawingMode.fillStroke : CGPathDrawingMode.stroke)
 }
@@ -823,4 +825,16 @@ fileprivate func blitterLoad(handle: VoidPtr, blitter: OpaquePointer?, x: Int32,
 
 fileprivate func textFallback(handle: VoidPtr, strings: ConstCharPtrConstPtr, nStrings: Int32) -> CharPtr {
     return dupstr(strings![0]!)
+}
+
+fileprivate func attach_timer(fe: UnsafePointer<frontend>) -> Void {
+    let ptr = fe.pointee.gv
+    let gv: GameView = bridge(ptr: ptr!)
+    gv.activateTimer()
+}
+
+fileprivate func detach_timer(fe: UnsafePointer<frontend>) -> Void {
+    let ptr = fe.pointee.gv
+    let gv: GameView = bridge(ptr: ptr!)
+    gv.deactivateTimer()
 }

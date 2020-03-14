@@ -864,7 +864,11 @@ void frontend_default_colour(frontend *fe, float *output)
     CGFloat red;
     CGFloat green;
     CGFloat blue;
-    [[UIColor systemGreenColor] getRed:&red green:&green blue:&blue alpha:nil];
+    if (@available(iOS 13.0, *)) {
+        [[UIColor secondarySystemBackgroundColor] getRed:&red green:&green blue:&blue alpha:nil];
+    } else {
+        [[UIColor lightGrayColor] getRed:&red green:&green blue:&blue alpha:nil];
+    }
     output[0] = red;
     output[1] = green;
     output[2] = blue;
@@ -880,12 +884,10 @@ void get_random_seed(void **randseed, int *randseedsize)
 
 void activate_timer(frontend *fe)
 {
-    GameView *gv = (__bridge GameView *)(fe->gv);
-    [gv activateTimer];
+    fe->activate_timer(fe);
 }
 
 void deactivate_timer(frontend *fe)
 {
-    GameView *gv = (__bridge GameView *)(fe->gv);
-    [gv deactivateTimer];
+    fe->deactivate_timer(fe);
 }

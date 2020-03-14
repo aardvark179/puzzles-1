@@ -15,6 +15,8 @@ struct frontend {
     float *colours;
     int ncolours;
     bool clipping;
+    void (*activate_timer)(frontend *);
+    void (*deactivate_timer)(frontend *);
 };
 
 // Game instances we will want to refer to
@@ -39,5 +41,5 @@ static game *towers_ptr = &towers;
 static game *undead_ptr = &undead;
 static game *unequal_ptr = &unequal;
 static game *untangle_ptr = &untangle;
-static game *swift_gamelist = gamelist;
+static game **swift_gamelist = gamelist;
 #endif /* frontend_h */
