@@ -54,6 +54,12 @@ class GameView : UIView, GameSettingsDelegate {
         theGame = game
         super.init(frame: frame)
         fe.gv = bridge(obj: self)
+            
+        // Set the environment to set the preferred tile size...
+        let key = "\(String(cString: theGame.pointee.name).uppercased().replacingOccurrences(of: " ", with: ""))_TILESIZE"
+        let value = "\(theGame.pointee.preferred_tilesize * 4)"
+        setenv(key, value, 1)
+        
         midend = midend_new(&fe, theGame, &swift_drawing_api, bridge(obj: self));
         fe.colours = midend_colours(midend, &fe.ncolours);
         self.backgroundColor = UIColor.init(red: CGFloat(fe.colours![0]), green: CGFloat(fe.colours![1]), blue: CGFloat(fe.colours![2]), alpha: 1)
