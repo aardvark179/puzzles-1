@@ -308,8 +308,8 @@ class GameView : UIView, GameSettingsDelegate {
         var p = touch!.location(in: self)
         p.x -= gameRect.origin.x
         p.y -= gameRect.origin.y
-        let touchTimer = Timer(timeInterval: TimeInterval(0.5), target: self, selector: #selector(handleTouchTimer), userInfo: nil, repeats: false)
-        RunLoop.current.add(touchTimer, forMode: RunLoop.Mode.default)
+        touchTimer = Timer(timeInterval: TimeInterval(0.5), target: self, selector: #selector(handleTouchTimer), userInfo: nil, repeats: false)
+        RunLoop.current.add(touchTimer!, forMode: RunLoop.Mode.default)
         touchState = 1
         touchXPoints = Int32(p.x)
         touchYPoints = Int32(p.y)
