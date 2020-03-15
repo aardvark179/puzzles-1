@@ -34,6 +34,7 @@ class GameSettingsController :UITableViewController, GameSettingsChoiceControlle
                 let delimiter = sval.first!
                 let parts = sval.split(separator: delimiter, omittingEmptySubsequences: true)
                 choices.append(parts.map({ss in String(ss)}))
+                num += 1;
             }
         }
         self.choiceText = choices
