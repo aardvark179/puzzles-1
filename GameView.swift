@@ -653,7 +653,7 @@ fileprivate func rgb(gv: GameView, colour: Int32) -> [CGFloat] {
 fileprivate func drawText(handle: VoidPtr, x: Int32, y: Int32, fontType: Int32, fontSize: Int32, align: Int32, colour: Int32, text: ConstCharPtr?) -> Void {
     let gv = getGV(handle: handle)
     let str = String(cString: text!!)
-    let font = CTFontCreateWithName(str as CFString, CGFloat(fontSize), nil)
+    let font = CTFontCreateWithName("Helvetica" as CFString, CGFloat(fontSize), nil)
     let cs = CGColorSpaceCreateDeviceRGB()
     let comps: [CGFloat] = rgb(gv: gv, colour: colour)
     let colour = CGColor(colorSpace: cs, components: comps)
