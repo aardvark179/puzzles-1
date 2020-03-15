@@ -102,6 +102,7 @@ class GameView : UIView, GameSettingsDelegate {
     
     func startNewGame() {
         let m: OpaquePointer = self.midend
+        self.midend = nil
         let window: UIWindow = UIApplication.shared.windows[0]
         
         // Create a clear overlau to consume touches during puzzle generation
