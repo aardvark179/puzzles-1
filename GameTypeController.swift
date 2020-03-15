@@ -87,6 +87,6 @@ class GameTypeController : UITableViewController, GameSettingsDelegate {
 
 fileprivate func number_of_presets(midend: OpaquePointer) -> Int {
     var n: Int32 = 0;
-    _ = midend_get_presets(midend, &n)
-    return Int(n)
+    let pm = midend_get_presets(midend, &n)
+    return Int(pm!.pointee.n_entries)
 }
