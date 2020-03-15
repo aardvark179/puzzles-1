@@ -536,11 +536,11 @@ class GameView : UIView, GameSettingsDelegate {
     }
     
     @objc func doUndo() {
-        midend_process_key(midend, -1, -1, Int32("u")!);
+        midend_process_key(midend, -1, -1, Int32(Character("u").asciiValue!));
     }
     
     @objc func doRedo() {
-        midend_process_key(midend, -1, -1, Int32("r")!&0x1F);
+        midend_process_key(midend, -1, -1, Int32(Character("r").asciiValue!)&0x1F);
     }
     
     func doRestart() {
