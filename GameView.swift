@@ -288,7 +288,7 @@ class GameView : UIView, GameSettingsDelegate {
             let context = UIGraphicsGetCurrentContext()
             let image = bitmap?.makeImage()
             if (image != nil) {
-                context?.draw(image!, in: rect)
+                context?.draw(image!, in: gameRect)
             }
         }
     }
@@ -455,8 +455,7 @@ class GameView : UIView, GameSettingsDelegate {
     }
     
     func drawGameRect(rect: CGRect) {
-        let t = CGAffineTransform(scaleX: 1.0 / contentScaleFactor, y: 1.0 / contentScaleFactor)
-        let r = rect.applying(t).offsetBy(dx: gameRect.origin.x, dy: gameRect.origin.y)
+        let r = CGRect(x: rect.origin.x/contentScaleFactor, y: rect.origin.y/contentScaleFactor, width: rect.width/contentScaleFactor, height: rect.height/contentScaleFactor).offsetBy(dx: gameRect.origin.x, dy: gameRect.origin.y)
         setNeedsDisplay(r)
     }
     
@@ -714,14 +713,13 @@ fileprivate func drawPolygon(handle: VoidPtr, coords: Int32Ptr, npoints: Int32, 
     for i in 0..<Int(npoints) {
         gv.bitmap!.addLine(to: CGPoint(x: CGFloat(coords![2 * i]), y: CGFloat(coords![2 * i + 1])))
     }
-    gv.bitmap!.addLine(to: CGPoint(x: CGFloat(coords![0]), y: CGFloat(coords![1])))
-    gv.bitmap!.strokePath()
+    gv.bitmap!.closePath()
     if (fillcolour >=  0) {
         comps = rgb(gv: gv, colour: fillcolour)
         gv.bitmap!.setFillColor(red: comps[0], green: comps[1], blue: comps[2], alpha: 1)
-        gv.bitmap!.fillPath(using: .evenOdd)
     }
-    gv.bitmap!.drawPath(using: fillcolour >= 0 ? CGPathDrawingMode.fillStroke : CGPathDrawingMode.stroke)
+    let mode = fillcolour >= 0 ? CGPathDrawingMode.fillStroke : CGPathDrawingMode.stroke
+    gv.bitmap!.drawPath(using: mode)
 }
 
 fileprivate func drawCircle(handle: VoidPtr, cx: Int32, cy: Int32, radius: Int32, fillcolour: Int32, outlinecolour: Int32) -> Void {
