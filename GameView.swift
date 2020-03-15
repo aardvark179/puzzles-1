@@ -47,7 +47,7 @@ class GameView : UIView, GameSettingsDelegate {
     var buttons: Dictionary<String, UIBarButtonItem> = Dictionary<String, UIBarButtonItem>()
     var statusbar: UILabel?
     var bitmap: CGContext?
-    var blitter: Blitter?
+    var blitters: Set<Blitter> = Set()
  
     init(nc:UINavigationController, game: UnsafeMutablePointer<game>, saved:String?, inProgess:Bool, frame:CGRect) {
         self.nc = nc
@@ -772,7 +772,15 @@ fileprivate func statusBar(handle: VoidPtr, text: ConstCharPtr) -> Void {
     getGV(handle: handle).statusbar?.text = String(cString: text!)
 }
 
-class Blitter {
+class Blitter : Hashable {
+    static func == (lhs: Blitter, rhs: Blitter) -> Bool {
+        return lhs === rhs
+    }
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(bridge(obj: self).hashValue)
+    }
+    
     var x: Int32 = 0
     var y: Int32 = 0
     var w: Int32 = 0
@@ -788,20 +796,23 @@ class Blitter {
         self.h = h
     }
 }
+fileprivate  func getBlitter(ptr: OpaquePointer) -> Blitter {
+    return bridge(ptr: UnsafeMutablePointer(ptr))
+}
 
 fileprivate func blitterNew(handle: VoidPtr, w: Int32, h: Int32) -> OpaquePointer? {
     let b = Blitter.init(x: -1, y: -1, w: w, h: w)
-    getGV(handle: handle).blitter = b
+    getGV(handle: handle).blitters.insert(b)
     return OpaquePointer(bridge(obj: b))
 }
 
 fileprivate func blitterFree(handle: VoidPtr, blitter: OpaquePointer?) -> Void {
-    getGV(handle: handle).blitter = nil
+    getGV(handle: handle).blitters.remove(getBlitter(ptr: blitter!))
 }
 
 fileprivate func blitterSave(handle: VoidPtr, blitter: OpaquePointer?, x: Int32, y: Int32) -> Void {
     let gv = getGV(handle: handle)
-    let b = gv.blitter!
+    let b = getBlitter(ptr: blitter!)
     let r = CGRect(x: Int(x), y: Int(y), width: Int(b.w), height: Int(b.h))
     let r2 = CGRect(x: 0, y: 0, width: gv.bitmap!.width, height: gv.bitmap!.height)
     let v = r.intersection(r2)
@@ -809,12 +820,12 @@ fileprivate func blitterSave(handle: VoidPtr, blitter: OpaquePointer?, x: Int32,
     b.y = y
     b.ox = Int32(v.origin.x)
     b.oy = Int32(v.origin.y)
-    b.img = gv.bitmap!.makeImage()?.cropping(to: v)
+    b.img = gv.bitmap!.makeImage()!.cropping(to: CGRect(x: v.origin.x, y: CGFloat(gv.bitmap!.height) - v.origin.y - v.height, width: v.width, height: v.height))
 }
 
 fileprivate func blitterLoad(handle: VoidPtr, blitter: OpaquePointer?, x: Int32, y: Int32) -> Void {
     let gv = getGV(handle: handle)
-    let bl = gv.blitter!
+    let bl = getBlitter(ptr: blitter!)
     var x = x
     var y = y
     
