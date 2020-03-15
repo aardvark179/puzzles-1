@@ -515,13 +515,15 @@ class GameView : UIView, GameSettingsDelegate {
     func doSpecificGame() {
         var winTitle: CharPtr = nil
         let config = midend_get_config(midend, Int32(CFG_DESC), &winTitle)
-        // Push the settings controller.
+        nc.pushViewController(GameSettingsController(game: theGame, config_items: config!, type: CFG_DESC, title: String(cString: winTitle!), delegate: self), animated: true)
+        free(winTitle)
     }
     
     func doSpecificSeed() {
         var winTitle: CharPtr = nil
         let config = midend_get_config(midend, Int32(CFG_SEED), &winTitle)
-        // Push the settings controller.
+        nc.pushViewController(GameSettingsController(game: theGame, config_items: config!, type: CFG_SEED, title: String(cString: winTitle!), delegate: self), animated: true)
+        free(winTitle)
     }
     
     func didApply(config: UnsafeMutablePointer<config_item>) {
