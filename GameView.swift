@@ -384,7 +384,7 @@ class GameView : UIView, GameSettingsDelegate {
             if (touchState == 1) {
                 midend_process_key(midend, touchXPixels, touchYPizels, ButtonDown[touchButton])
             }
-            midend_process_key(midend, touchXPixels, touchYPizels, ButtonUp[touchButton])
+            midend_process_key(midend, xPixels, yPixels, ButtonUp[touchButton])
         }
         touchState = 0
         touchTimer?.invalidate()
