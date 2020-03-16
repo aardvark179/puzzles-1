@@ -34,8 +34,8 @@ class GameSettingsController :UITableViewController, GameSettingsChoiceControlle
                 let delimiter = sval.first!
                 let parts = sval.split(separator: delimiter, omittingEmptySubsequences: true)
                 choices.append(parts.map({ss in String(ss)}))
-                num += 1;
             }
+            num += 1;
         }
         self.choiceText = choices
         super.init(style: .grouped)
@@ -82,7 +82,7 @@ class GameSettingsController :UITableViewController, GameSettingsChoiceControlle
         text.tag = indexPath.row
         text.addTarget(self, action: #selector(valueChanged), for: .editingChanged)
         text.textAlignment = .right
-        text.text = String(cString: config_items[num].u.string.sval)
+        text.text = String(cString: config_items[indexPath.row].u.string.sval)
         cell.addSubview(text)
     }
     
@@ -90,7 +90,7 @@ class GameSettingsController :UITableViewController, GameSettingsChoiceControlle
         let sw = UISwitch(frame: CGRect(x: self.view.frame.width - 95 - offset, y: 9, width: 80, height: 31))
         sw.tag = indexPath.row
         sw.addTarget(self, action: #selector(valueChanged), for: .valueChanged)
-        sw.isOn = config_items[num].u.boolean.bval
+        sw.isOn = config_items[indexPath.row].u.boolean.bval
         cell.addSubview(sw)
     }
     
@@ -105,13 +105,13 @@ class GameSettingsController :UITableViewController, GameSettingsChoiceControlle
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = UITableViewCell(style: .default, reuseIdentifier: "Cell")
-        let offset: CGFloat = traitCollection.horizontalSizeClass == .compact ? 0 : 40
+        let offset: CGFloat =  (traitCollection.horizontalSizeClass == .compact) ? 0 : 40
         cell.selectionStyle = .none
         switch (indexPath.section) {
         case 0:
             if (type == CFG_SETTINGS) {
                 cell.textLabel?.text = String(cString: config_items[indexPath.row].name)
-                switch (Int(config_items[num].type)) {
+                switch (Int(config_items[indexPath.row].type)) {
                 case C_STRING:
                     textItem(offset, indexPath, cell)
                 case C_BOOLEAN:
@@ -144,13 +144,12 @@ class GameSettingsController :UITableViewController, GameSettingsChoiceControlle
     }
     
     @objc func valueChanged(sender: UIControl) {
-        var item = config_items[sender.tag]
-        switch(Int(item.type)) {
+        switch(Int(config_items[sender.tag].type)) {
         case C_STRING:
-            free(item.u.string.sval)
-            item.u.string.sval = dupstr((sender as! UITextField).text?.cString(using: .utf8))
+            free(config_items[sender.tag].u.string.sval)
+            config_items[sender.tag].u.string.sval = dupstr((sender as! UITextField).text?.cString(using: .utf8))
         case C_BOOLEAN:
-            item.u.boolean.bval = (sender as! UISwitch).isOn
+            config_items[sender.tag].u.boolean.bval = (sender as! UISwitch).isOn
         default:
             break
         }
@@ -158,11 +157,13 @@ class GameSettingsController :UITableViewController, GameSettingsChoiceControlle
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if (indexPath.section == 0) {
-            let choices = choiceText[indexPath.row]
-            let value = config_items[indexPath.row].u.choices.selected
-            let title = String(cString: config_items[indexPath.row].name)
-            let gscc = GameSettingsChoiceController(game: game, index: indexPath.row, choices: choices, value: Int(value), title: title, delegate: self)
-            navigationController?.pushViewController(gscc, animated: true)
+            if (config_items[indexPath.row].type == C_CHOICES) {
+                let choices = choiceText[indexPath.row]
+                let value = config_items[indexPath.row].u.choices.selected
+                let title = String(cString: config_items[indexPath.row].name)
+                let gscc = GameSettingsChoiceController(game: game, index: indexPath.row, choices: choices, value: Int(value), title: title, delegate: self)
+                navigationController?.pushViewController(gscc, animated: true)
+            }
         }
         if (indexPath.section == 1 && indexPath.row == 0) {
             delegate.didApply(item: config_items)

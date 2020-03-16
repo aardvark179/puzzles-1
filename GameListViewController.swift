@@ -127,9 +127,9 @@ class GameListViewCollectionLayout : UICollectionViewFlowLayout {
         self.display = display
         self.containerWidth = collectionWidth
         super.init()
-        self.configLayout()
         self.minimumLineSpacing = 10
         self.minimumInteritemSpacing = 10
+        self.configLayout()
     }
     
     required init?(coder: NSCoder) {
@@ -150,6 +150,11 @@ class GameListViewCollectionLayout : UICollectionViewFlowLayout {
             let optimalWidth = (containerWidth - space) / CGFloat(column)
             self.itemSize = CGSize(width: optimalWidth, height: 300)
         }
+    }
+    
+    override func invalidateLayout() {
+        super.invalidateLayout()
+        configLayout()
     }
 }
 
@@ -196,7 +201,7 @@ class GameListViewController : UICollectionViewController, GameViewControllerSav
                 i -= 1
             }
             if (i >= 0) {
-                return gameViewControllerForGame(game: swift_gamelist![i] as! UnsafeMutablePointer<game>)
+                return gameViewControllerForGame(game: swift_gamelist![i]!)
             }
         }
         return nil
@@ -231,6 +236,19 @@ class GameListViewController : UICollectionViewController, GameViewControllerSav
         collectionView.reloadData()
     }
     
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        reloadCollectionViewLayout(view.bounds.width)
+    }
+    
+    func reloadCollectionViewLayout(_ width: CGFloat) {
+        (self.collectionViewLayout as! GameListViewCollectionLayout).containerWidth = width
+        if (traitCollection.horizontalSizeClass == .compact) {
+            (self.collectionViewLayout as! GameListViewCollectionLayout).display = .list
+        } else {
+            (self.collectionViewLayout as! GameListViewCollectionLayout).display = .grid(column: 4)
+        }
+    }
     
     func saveGame(name: String, state: String, inProgress: Bool) {
         if (inProgress) {
@@ -239,7 +257,7 @@ class GameListViewController : UICollectionViewController, GameViewControllerSav
             gamesInProgress.remove(name)
         }
         do {
-            try state.write(toFile: "\(path)/\(name))\(inProgress ? ".save" : ".new")", atomically: true, encoding: .utf8)
+            try state.write(toFile: "\(path)/\(name)\(inProgress ? ".save" : ".new")", atomically: true, encoding: .utf8)
         } catch {
             
         }

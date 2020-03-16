@@ -476,7 +476,10 @@ class GameView : UIView, GameSettingsDelegate {
             return
         }
         let toolbarHeight: CGFloat = self.traitCollection.verticalSizeClass == UIUserInterfaceSizeClass.compact ? 32 : 44
-        let topMargin: CGFloat = 0
+        var topMargin: CGFloat = 0
+        if #available(iOS 11.0, *) {
+            topMargin += safeAreaInsets.top
+        }
         var usableHeight = self.frame.height - toolbarHeight - topMargin
         
         let r: CGRect = CGRect(x: 0, y: topMargin + usableHeight, width: self.frame.width, height: toolbarHeight)
@@ -648,17 +651,19 @@ var swift_drawing_api: drawing_api = drawing_api(
 fileprivate func getGV(handle: VoidPtr) -> GameView {
     return bridge(ptr: UnsafeMutableRawPointer(OpaquePointer(handle))!)
 }
-fileprivate func rgb(gv: GameView, colour: Int32) -> [CGFloat] {
+fileprivate func rgba(gv: GameView, colour: Int32) -> [CGFloat] {
     return [CGFloat(gv.fe.colours![Int(colour) * 3 + 0]),
             CGFloat(gv.fe.colours![Int(colour) * 3 + 1]),
-            CGFloat(gv.fe.colours![Int(colour) * 3 + 2])]
+            CGFloat(gv.fe.colours![Int(colour) * 3 + 2]),
+            1
+    ]
 }
 fileprivate func drawText(handle: VoidPtr, x: Int32, y: Int32, fontType: Int32, fontSize: Int32, align: Int32, colour: Int32, text: ConstCharPtr?) -> Void {
     let gv = getGV(handle: handle)
     let str = String(cString: text!!)
     let font = CTFontCreateWithName("Helvetica" as CFString, CGFloat(fontSize), nil)
     let cs = CGColorSpaceCreateDeviceRGB()
-    let comps: [CGFloat] = rgb(gv: gv, colour: colour)
+    let comps: [CGFloat] = rgba(gv: gv, colour: colour)
     let colour = CGColor(colorSpace: cs, components: comps)
     let attributes: Dictionary<CFString, Any?> = [kCTFontAttributeName: font, kCTForegroundColorAttributeName: colour]
     let attrStr = CFAttributedStringCreate(nil, str as CFString, attributes as CFDictionary)
@@ -692,14 +697,14 @@ fileprivate func drawText(handle: VoidPtr, x: Int32, y: Int32, fontType: Int32, 
 
 fileprivate func drawRect(handle: VoidPtr, x: Int32, y :Int32, w: Int32, h: Int32, colour: Int32) -> Void {
     let gv = getGV(handle: handle)
-    let comps = rgb(gv: gv, colour: colour)
+    let comps = rgba(gv: gv, colour: colour)
     gv.bitmap!.setFillColor(red: comps[0], green: comps[1], blue: comps[2], alpha: 1)
     gv.bitmap!.fill(CGRect(x: CGFloat(x), y: CGFloat(y), width: CGFloat(w), height: CGFloat(h)))
 }
 
 fileprivate func drawLine(handle: VoidPtr, x: Int32, y: Int32, x2: Int32, y2: Int32, colour: Int32) -> Void {
     let gv = getGV(handle: handle)
-    let comps = rgb(gv: gv, colour: colour)
+    let comps = rgba(gv: gv, colour: colour)
     gv.bitmap!.setStrokeColor(red: comps[0], green: comps[1], blue: comps[2], alpha: 1)
     gv.bitmap!.beginPath()
     gv.bitmap!.move(to: CGPoint(x: CGFloat(x), y: CGFloat(y)))
@@ -709,7 +714,7 @@ fileprivate func drawLine(handle: VoidPtr, x: Int32, y: Int32, x2: Int32, y2: In
 
 fileprivate func drawPolygon(handle: VoidPtr, coords: Int32Ptr, npoints: Int32, fillcolour: Int32, outlinecolour: Int32) -> Void {
     let gv = getGV(handle: handle)
-    var comps = rgb(gv: gv, colour: outlinecolour)
+    var comps = rgba(gv: gv, colour: outlinecolour)
     gv.bitmap!.setStrokeColor(red: comps[0], green: comps[1], blue: comps[2], alpha: 1)
     gv.bitmap!.beginPath()
     gv.bitmap!.move(to: CGPoint(x: CGFloat(coords![0]), y: CGFloat(coords![1])))
@@ -718,7 +723,7 @@ fileprivate func drawPolygon(handle: VoidPtr, coords: Int32Ptr, npoints: Int32, 
     }
     gv.bitmap!.closePath()
     if (fillcolour >=  0) {
-        comps = rgb(gv: gv, colour: fillcolour)
+        comps = rgba(gv: gv, colour: fillcolour)
         gv.bitmap!.setFillColor(red: comps[0], green: comps[1], blue: comps[2], alpha: 1)
     }
     let mode = fillcolour >= 0 ? CGPathDrawingMode.fillStroke : CGPathDrawingMode.stroke
@@ -727,13 +732,13 @@ fileprivate func drawPolygon(handle: VoidPtr, coords: Int32Ptr, npoints: Int32, 
 
 fileprivate func drawCircle(handle: VoidPtr, cx: Int32, cy: Int32, radius: Int32, fillcolour: Int32, outlinecolour: Int32) -> Void {
     let gv = getGV(handle: handle)
-    var comps = rgb(gv: gv, colour: outlinecolour)
+    var comps = rgba(gv: gv, colour: outlinecolour)
     let r = CGRect(x: CGFloat(cx-radius+1), y: CGFloat(cy-radius+1), width: CGFloat(radius*2-1), height: CGFloat(radius*2-1))
     gv.bitmap!.setStrokeColor(red: comps[0], green: comps[1], blue: comps[2], alpha: 1)
     gv.bitmap!.beginPath()
     gv.bitmap!.strokePath()
     if (fillcolour >=  0) {
-        comps = rgb(gv: gv, colour: fillcolour)
+        comps = rgba(gv: gv, colour: fillcolour)
         gv.bitmap!.setFillColor(red: comps[0], green: comps[1], blue: comps[2], alpha: 1)
         gv.bitmap!.fillEllipse(in: r)
     }
