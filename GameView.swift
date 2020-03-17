@@ -824,8 +824,8 @@ fileprivate func blitterSave(handle: VoidPtr, blitter: OpaquePointer?, x: Int32,
     let v = r.intersection(r2)
     b.x = x
     b.y = y
-    b.ox = Int32(v.origin.x)
-    b.oy = Int32(v.origin.y)
+    b.ox = Int32(v.origin.x) - x
+    b.oy = Int32(v.origin.y) - y
     b.img = gv.bitmap!.makeImage()!.cropping(to: CGRect(x: v.origin.x, y: CGFloat(gv.bitmap!.height) - v.origin.y - v.height, width: v.width, height: v.height))
 }
 
