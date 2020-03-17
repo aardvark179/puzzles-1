@@ -242,7 +242,7 @@ class GameView : UIView, GameSettingsDelegate {
                 labels = undeadLabels;
             } else if (theGame == unequal_ptr) {
                 let unequalLabels = ["Marks", "Hints"];
-                main_button_count = Int(String(cString: midend_get_game_id(midend)))!;
+                main_button_count = Int(String(String(cString: midend_get_game_id(midend)).split(separator: ":").first!))!;
                 extra_labels = unequalLabels;
                 extra_button_count = 2;
             }
