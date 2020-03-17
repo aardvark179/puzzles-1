@@ -91,13 +91,14 @@ class GameListViewCell : UICollectionViewCell {
         image.tag = 2
         contentView.addSubview(image)
         
-        let detail = UILabel(frame: CGRect(x: 5, y: 31 + 96, width: frame.width - 10, height: 50))
+        let detail = UILabel(frame: CGRect(x: 5, y: 31 + 96, width: frame.width - 10, height: 100))
+        detail.numberOfLines = 0
         detail.tag = 3
         contentView.addSubview(detail)
         
         let inProgress = UIImageView(frame: CGRect(x: frame.width - 50, y: 50, width: 40, height: 40))
         inProgress.tag = 4
-        inProgress.image = UIImage(contentsOfFile: "inprogress.png")
+        inProgress.image = UIImage(named: "inprogress.png")
         contentView.addSubview(inProgress)
     }
     
@@ -146,9 +147,9 @@ class GameListViewCollectionLayout : UICollectionViewFlowLayout {
             self.itemSize = CGSize(width: containerWidth * 0.9, height: 300)
         case(.grid(let column)):
             self.scrollDirection = .vertical
-            let space = CGFloat(column - 1) * minimumLineSpacing
+            let space = CGFloat(column) * minimumInteritemSpacing
             let optimalWidth = (containerWidth - space) / CGFloat(column)
-            self.itemSize = CGSize(width: optimalWidth, height: 300)
+            self.itemSize = CGSize(width: optimalWidth, height: 225)
         }
     }
     
@@ -246,7 +247,7 @@ class GameListViewController : UICollectionViewController, GameViewControllerSav
         if (traitCollection.horizontalSizeClass == .compact) {
             (self.collectionViewLayout as! GameListViewCollectionLayout).display = .list
         } else {
-            (self.collectionViewLayout as! GameListViewCollectionLayout).display = .grid(column: 4)
+            (self.collectionViewLayout as! GameListViewCollectionLayout).display = .grid(column: Int(width) / 250 )
         }
     }
     
