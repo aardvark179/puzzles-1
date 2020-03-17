@@ -355,7 +355,7 @@ class GameView : UIView, GameSettingsDelegate {
             }
         } else {
             if (touchState == 1) {
-                if (abs(xPoints + touchXPoints) >= 20 || abs(yPoints + touchYPoints) >= 20) {
+                if (abs(xPoints + touchXPoints) >= 10 || abs(yPoints + touchYPoints) >= 10) {
                     touchTimer?.invalidate()
                     touchTimer = nil
                     midend_process_key(midend, touchXPixels, touchYPizels, ButtonDown[touchButton]);
