@@ -19,7 +19,7 @@ class GameSettingsController :UITableViewController, GameSettingsChoiceControlle
     var type: Int
     var delegate: GameSettingsDelegate
     var num: Int
-    var choiceText: [[String]]
+    var choiceText: [[String]?]
     
     init(game: UnsafePointer<game>, config_items: UnsafeMutablePointer<config_item>, type: Int, title: String, delegate: GameSettingsDelegate) {
         self.game = game
@@ -27,13 +27,18 @@ class GameSettingsController :UITableViewController, GameSettingsChoiceControlle
         self.type = type
         self.delegate = delegate
         num = 0
-        var choices = Array<[String]>()
+        var choices = Array<[String]?>()
         while (config_items[num].type != C_END) {
-            if (config_items[num].type == C_STRING) {
+            if (config_items[num].type == C_CHOICES) {
                 let sval = String(cString: config_items[num].u.string.sval)
                 let delimiter = sval.first!
                 let parts = sval.split(separator: delimiter, omittingEmptySubsequences: true)
+                if (num <= choices.capacity) {
+                    choices.reserveCapacity(num + 1)
+                }
                 choices.append(parts.map({ss in String(ss)}))
+            } else {
+                choices.append(nil)
             }
             num += 1;
         }
@@ -99,7 +104,7 @@ class GameSettingsController :UITableViewController, GameSettingsChoiceControlle
         let label = UITextField(frame: CGRect(x: self.view.frame.width-200-offset, y: 11, width: 165, height: 31))
         label.isEnabled = false
         label.textAlignment = .right
-        label.text = choiceText[indexPath.row][Int(config_items[indexPath.row].u.choices.selected)]
+        label.text = choiceText[indexPath.row]![Int(config_items[indexPath.row].u.choices.selected)]
         cell.addSubview(label)
     }
     
@@ -158,7 +163,7 @@ class GameSettingsController :UITableViewController, GameSettingsChoiceControlle
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if (indexPath.section == 0) {
             if (config_items[indexPath.row].type == C_CHOICES) {
-                let choices = choiceText[indexPath.row]
+                let choices = choiceText[indexPath.row]!
                 let value = config_items[indexPath.row].u.choices.selected
                 let title = String(cString: config_items[indexPath.row].name)
                 let gscc = GameSettingsChoiceController(game: game, index: indexPath.row, choices: choices, value: Int(value), title: title, delegate: self)
