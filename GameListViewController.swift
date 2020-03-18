@@ -74,36 +74,67 @@ extension CollectionDisplay : Equatable {
 }
 
 class GameListViewCell : UICollectionViewCell {
+    let label: UILabel
+    let image: UIImageView
+    let details: UILabel
+    let inProgress: UIImageView
+    
     override init(frame: CGRect) {
+        label = UILabel()
+        label.tag = 1
+        label.font = .boldSystemFont(ofSize: 16)
+        
+        image = UIImageView()
+        image.tag = 2
+
+        details = UILabel()
+        details.numberOfLines = 0
+        details.tag = 3
+        
+        inProgress = UIImageView()
+        inProgress.tag = 4
+        inProgress.image = UIImage(named: "inprogress.png")
+        
         super.init(frame: frame)
         if #available(iOS 13.0, *) {
             contentView.backgroundColor = .secondarySystemGroupedBackground
         } else {
             contentView.backgroundColor = .white
         }
-        let label = UILabel(frame: CGRect(x: 0, y: 0, width: frame.width, height: 31))
-        label.tag = 1
-        label.font = .boldSystemFont(ofSize: 16)
-        label.textAlignment = .center
+        
+        relayoutCell()
         contentView.addSubview(label)
-        
-        let image = UIImageView(frame: CGRect(x: (frame.width - 96) / 2, y: 31, width: 96, height: 96))
-        image.tag = 2
         contentView.addSubview(image)
-        
-        let detail = UILabel(frame: CGRect(x: 5, y: 31 + 96, width: frame.width - 10, height: 100))
-        detail.numberOfLines = 0
-        detail.tag = 3
-        contentView.addSubview(detail)
-        
-        let inProgress = UIImageView(frame: CGRect(x: frame.width - 50, y: 50, width: 40, height: 40))
-        inProgress.tag = 4
-        inProgress.image = UIImage(named: "inprogress.png")
+        contentView.addSubview(details)
         contentView.addSubview(inProgress)
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        if (traitCollection.horizontalSizeClass != previousTraitCollection?.horizontalSizeClass || traitCollection.verticalSizeClass != previousTraitCollection?.verticalSizeClass) {
+            relayoutCell()
+        }
+    }
+    
+    func relayoutCell() {
+        if (traitCollection.horizontalSizeClass == .compact) {
+            // Layout for a list view
+            label.frame = CGRect(x: 100, y: 0, width: frame.width - 100, height: 26)
+            label.textAlignment = .left
+            image.frame = CGRect(x: 2, y: 2, width: 96, height: 96)
+            details.frame = CGRect(x: 100, y: 30, width: frame.width - 100, height: frame.height - 30)
+            inProgress.frame = CGRect(x: frame.width - 40, y: 5, width: 40, height: 40)
+        } else {
+            // Layout for a grid view
+            label.frame = CGRect(x: 0, y: 0, width: frame.width, height: 31)
+            label.textAlignment = .center
+            image.frame = CGRect(x: (frame.width - 96) / 2, y: 31, width: 96, height: 96)
+            details.frame = CGRect(x: 5, y: 31 + 96, width: frame.width - 10, height: 100)
+            inProgress.frame = CGRect(x: frame.width - 50, y: 50, width: 40, height: 40)
+        }
     }
 }
 
