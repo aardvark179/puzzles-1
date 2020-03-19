@@ -19,6 +19,7 @@
 		115DFEC724199B9400BC5FF8 /* GameSettingsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 115DFEC624199B9400BC5FF8 /* GameSettingsController.swift */; };
 		115DFEC9241A598A00BC5FF8 /* GameSettingsChoiceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 115DFEC8241A598A00BC5FF8 /* GameSettingsChoiceController.swift */; };
 		11800765241C008500E7658A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11800764241C008500E7658A /* AppDelegate.swift */; };
+		119B443224240E4000E2A70B /* utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 119B443124240E4000E2A70B /* utils.c */; };
 		11ACE42524224E280033853C /* utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11ACE42424224E280033853C /* utils.swift */; };
 		3701DC0916E730ED00896D7D /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3701DC0816E730ED00896D7D /* UIKit.framework */; };
 		3701DC0B16E730ED00896D7D /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3701DC0A16E730ED00896D7D /* Foundation.framework */; };
@@ -243,6 +244,7 @@
 		115DFEC624199B9400BC5FF8 /* GameSettingsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameSettingsController.swift; sourceTree = SOURCE_ROOT; };
 		115DFEC8241A598A00BC5FF8 /* GameSettingsChoiceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameSettingsChoiceController.swift; sourceTree = SOURCE_ROOT; };
 		11800764241C008500E7658A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = SOURCE_ROOT; };
+		119B443124240E4000E2A70B /* utils.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = utils.c; sourceTree = "<group>"; };
 		11ACE42424224E280033853C /* utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = utils.swift; sourceTree = "<group>"; };
 		3701DC0516E730ED00896D7D /* Puzzles-dev.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Puzzles-dev.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3701DC0816E730ED00896D7D /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -487,6 +489,7 @@
 		3701DBFC16E730ED00896D7D = {
 			isa = PBXGroup;
 			children = (
+				119B443124240E4000E2A70B /* utils.c */,
 				11ACE42424224E280033853C /* utils.swift */,
 				115DFEC12411528700BC5FF8 /* frontend.h */,
 				115DFEB8240C156700BC5FF8 /* Launch Screen.storyboard */,
@@ -1048,6 +1051,7 @@
 				115DFEB5240C0FAA00BC5FF8 /* sort.c in Sources */,
 				3701DC8916E734A800896D7D /* pegs.c in Sources */,
 				3701DC8A16E734A800896D7D /* penrose.c in Sources */,
+				119B443224240E4000E2A70B /* utils.c in Sources */,
 				3701DC8B16E734A800896D7D /* random.c in Sources */,
 				3701DC8C16E734A800896D7D /* range.c in Sources */,
 				3701DC8D16E734A800896D7D /* rect.c in Sources */,

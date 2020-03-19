@@ -853,35 +853,4 @@ const struct drawing_api ios_drawing = {
     NULL, NULL, NULL, NULL, NULL, NULL, /* {begin,end}_{doc,page,puzzle} */
     NULL, NULL,                        /* line_width, line_dotted */
     ios_text_fallback,
-};      
-
-void fatal(const char *fmt, ...)
-{
-}
-
-void frontend_default_colour(frontend *fe, float *output)
-{
-    fe->default_colour(fe, output);
-}
-
-BOOL frontend_default_colour_for(frontend *fe, int colour, float* output) {
-    return false;
-}
-
-void get_random_seed(void **randseed, int *randseedsize)
-{
-    time_t *tp = snew(time_t);
-    time(tp);
-    *randseed = (void *)tp;
-    *randseedsize = sizeof(time_t);
-}
-
-void activate_timer(frontend *fe)
-{
-    fe->activate_timer(fe);
-}
-
-void deactivate_timer(frontend *fe)
-{
-    fe->deactivate_timer(fe);
-}
+};
