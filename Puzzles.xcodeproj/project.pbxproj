@@ -19,6 +19,7 @@
 		115DFEC724199B9400BC5FF8 /* GameSettingsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 115DFEC624199B9400BC5FF8 /* GameSettingsController.swift */; };
 		115DFEC9241A598A00BC5FF8 /* GameSettingsChoiceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 115DFEC8241A598A00BC5FF8 /* GameSettingsChoiceController.swift */; };
 		11800765241C008500E7658A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11800764241C008500E7658A /* AppDelegate.swift */; };
+		11ACE42524224E280033853C /* utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11ACE42424224E280033853C /* utils.swift */; };
 		3701DC0916E730ED00896D7D /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3701DC0816E730ED00896D7D /* UIKit.framework */; };
 		3701DC0B16E730ED00896D7D /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3701DC0A16E730ED00896D7D /* Foundation.framework */; };
 		3701DC0D16E730ED00896D7D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3701DC0C16E730ED00896D7D /* CoreGraphics.framework */; };
@@ -255,6 +256,7 @@
 		115DFEC624199B9400BC5FF8 /* GameSettingsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameSettingsController.swift; sourceTree = SOURCE_ROOT; };
 		115DFEC8241A598A00BC5FF8 /* GameSettingsChoiceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameSettingsChoiceController.swift; sourceTree = SOURCE_ROOT; };
 		11800764241C008500E7658A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = SOURCE_ROOT; };
+		11ACE42424224E280033853C /* utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = utils.swift; sourceTree = "<group>"; };
 		3701DC0516E730ED00896D7D /* Puzzles-dev.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Puzzles-dev.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3701DC0816E730ED00896D7D /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		3701DC0A16E730ED00896D7D /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -511,6 +513,7 @@
 		3701DBFC16E730ED00896D7D = {
 			isa = PBXGroup;
 			children = (
+				11ACE42424224E280033853C /* utils.swift */,
 				115DFEC12411528700BC5FF8 /* frontend.h */,
 				115DFEB8240C156700BC5FF8 /* Launch Screen.storyboard */,
 				37DDFDB216F45C53007B6287 /* CoreText.framework */,
@@ -1065,6 +1068,7 @@
 				3701DC6C16E734A800896D7D /* dominosa.c in Sources */,
 				11800765241C008500E7658A /* AppDelegate.swift in Sources */,
 				3701DC6D16E734A800896D7D /* drawing.c in Sources */,
+				11ACE42524224E280033853C /* utils.swift in Sources */,
 				3701DC6E16E734A800896D7D /* dsf.c in Sources */,
 				3701DC6F16E734A800896D7D /* fifteen.c in Sources */,
 				3701DC7016E734A800896D7D /* filling.c in Sources */,

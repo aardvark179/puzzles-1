@@ -17,6 +17,7 @@ struct frontend {
     bool clipping;
     void (*activate_timer)(frontend *);
     void (*deactivate_timer)(frontend *);
+    void (*default_colour)(frontend *, float *);
 };
 
 // Game instances we will want to refer to

@@ -849,15 +849,3 @@ fileprivate func blitterLoad(handle: VoidPtr, blitter: OpaquePointer?, x: Int32,
 fileprivate func textFallback(handle: VoidPtr, strings: ConstCharPtrConstPtr, nStrings: Int32) -> CharPtr {
     return dupstr(strings![0]!)
 }
-
-fileprivate func attach_timer(fe: UnsafePointer<frontend>) -> Void {
-    let ptr = fe.pointee.gv
-    let gv: GameView = bridge(ptr: ptr!)
-    gv.activateTimer()
-}
-
-fileprivate func detach_timer(fe: UnsafePointer<frontend>) -> Void {
-    let ptr = fe.pointee.gv
-    let gv: GameView = bridge(ptr: ptr!)
-    gv.deactivateTimer()
-}

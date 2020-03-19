@@ -861,17 +861,11 @@ void fatal(const char *fmt, ...)
 
 void frontend_default_colour(frontend *fe, float *output)
 {
-    CGFloat red;
-    CGFloat green;
-    CGFloat blue;
-    if (@available(iOS 13.0, *)) {
-        [[UIColor secondarySystemBackgroundColor] getRed:&red green:&green blue:&blue alpha:nil];
-    } else {
-        [[UIColor lightGrayColor] getRed:&red green:&green blue:&blue alpha:nil];
-    }
-    output[0] = red;
-    output[1] = green;
-    output[2] = blue;
+    fe->default_colour(fe, output);
+}
+
+BOOL frontend_default_colour_for(frontend *fe, int colour, float* output) {
+    return false;
 }
 
 void get_random_seed(void **randseed, int *randseedsize)
