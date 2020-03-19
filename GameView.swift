@@ -29,9 +29,9 @@ func bridge<T : AnyObject>(ptr : UnsafeMutableRawPointer) -> T {
 
 class GameView : UIView, GameSettingsDelegate {
     var nc: UINavigationController
-    var theGame: UnsafeMutablePointer<game>
+    var theGame: UnsafePointer<game>
     var midend: OpaquePointer!
-    var fe: frontend = frontend(gv: nil, colours: nil, ncolours: 0, clipping: false, activate_timer: {fe in attach_timer(fe: fe!)}, deactivate_timer: {fe in detach_timer(fe: fe!)})
+    var fe: frontend = frontend(gv: nil, colours: nil, ncolours: 0, clipping: false, activate_timer: {fe in attach_timer(fe: fe!)}, deactivate_timer: {fe in detach_timer(fe: fe!)}, default_colour: {fe, output in frontendDefaultColour(fe: fe, output: output)})
     var usableFrame: CGRect!
     var gameRect: CGRect!
     var timer: Timer!
@@ -49,7 +49,7 @@ class GameView : UIView, GameSettingsDelegate {
     var bitmap: CGContext?
     var blitters: Set<Blitter> = Set()
  
-    init(nc:UINavigationController, game: UnsafeMutablePointer<game>, saved:String?, inProgess:Bool, frame:CGRect) {
+    init(nc:UINavigationController, game: UnsafePointer<game>, saved:String?, inProgess:Bool, frame:CGRect) {
         self.nc = nc
         theGame = game
         super.init(frame: frame)
@@ -64,7 +64,7 @@ class GameView : UIView, GameSettingsDelegate {
         fe.colours = midend_colours(midend, &fe.ncolours);
         self.backgroundColor = UIColor.init(red: CGFloat(fe.colours![0]), green: CGFloat(fe.colours![1]), blue: CGFloat(fe.colours![2]), alpha: 1)
         if (saved != nil) {
-            var ctx = StringReadConext(save: saved!, position: 0)
+            let ctx = StringReadConext(save: saved!, position: 0)
             let msg = midend_deserialise(midend, {ctx, buffer, length in saveGameRead(ctx: ctx, buffer: buffer, length: length)}, bridge(obj: ctx))
             if (msg != nil) {
                 let alert = UIAlertController(title: "Puzzles", message: String(cString: msg!), preferredStyle: .alert)

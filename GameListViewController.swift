@@ -239,7 +239,7 @@ class GameListViewController : UICollectionViewController, GameViewControllerSav
         return nil
     }
     
-    func gameViewControllerForGame(game: UnsafeMutablePointer<game>) -> GameViewController {
+    func gameViewControllerForGame(game: UnsafePointer<game>) -> GameViewController {
         let inProgress: Bool
         let name = game.pointee.name
         var saved: String?

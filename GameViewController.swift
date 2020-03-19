@@ -14,14 +14,14 @@ protocol GameViewControllerSaver {
 }
 
 class GameViewController : UIViewController {
-    var theGame: UnsafeMutablePointer<game>
+    var theGame: UnsafePointer<game>
     var name: String = ""
     var saved: String?
     var initInProgress: Bool = false
     var gameView: GameView? = nil
     var saver: GameViewControllerSaver
     
-    init(game: UnsafeMutablePointer<game>, saved: String?, inProgress:Bool, saver: GameViewControllerSaver) {
+    init(game: UnsafePointer<game>, saved: String?, inProgress:Bool, saver: GameViewControllerSaver) {
         self.theGame = game
         self.name = String.init(cString: game.pointee.name)
         self.saved = saved

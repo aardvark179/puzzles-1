@@ -2,11 +2,11 @@ import Foundation
 import UIKit
 
 class GameTypeController : UITableViewController, GameSettingsDelegate {
-    let theGame: UnsafeMutablePointer<game>
+    let theGame: UnsafePointer<game>
     var midend: OpaquePointer
     var gameView: GameView
     
-    init(game: UnsafeMutablePointer<game>, midend: OpaquePointer, gameView: GameView) {
+    init(game: UnsafePointer<game>, midend: OpaquePointer, gameView: GameView) {
         self.theGame = game
         self.midend = midend
         self.gameView = gameView

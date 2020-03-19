@@ -31,15 +31,15 @@ extern const game undead;
 extern const game unequal;
 extern const game untangle;
 
-static game *filling_ptr = &filling;
-static game *keen_ptr = &keen;
-static game *map_ptr = &map;
-static game *net_ptr = &net;
-static game *pattern_ptr = &pattern;
-static game *solo_ptr = &solo;
-static game *towers_ptr = &towers;
-static game *undead_ptr = &undead;
-static game *unequal_ptr = &unequal;
-static game *untangle_ptr = &untangle;
-static game **swift_gamelist = gamelist;
+static const game *filling_ptr = &filling;
+static const game *keen_ptr = &keen;
+static const game *map_ptr = &map;
+static const game *net_ptr = &net;
+static const game *pattern_ptr = &pattern;
+static const game *solo_ptr = &solo;
+static const game *towers_ptr = &towers;
+static const game *undead_ptr = &undead;
+static const game *unequal_ptr = &unequal;
+static const game *untangle_ptr = &untangle;
+static const game **swift_gamelist = gamelist;
 #endif /* frontend_h */
