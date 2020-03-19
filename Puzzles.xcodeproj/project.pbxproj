@@ -79,9 +79,6 @@
 		3701DC9B16E734A800896D7D /* unruly.c in Sources */ = {isa = PBXBuildFile; fileRef = 3701DC6416E734A800896D7D /* unruly.c */; };
 		3701DC9C16E734A800896D7D /* untangle.c in Sources */ = {isa = PBXBuildFile; fileRef = 3701DC6516E734A800896D7D /* untangle.c */; };
 		3701DCA516E7391800896D7D /* printing.c in Sources */ = {isa = PBXBuildFile; fileRef = 3701DCA416E7391800896D7D /* printing.c */; };
-		3701DCA816E85D5D00896D7D /* GameView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3701DCA716E85D5D00896D7D /* GameView.m */; };
-		3701DCAB16E9D93F00896D7D /* GameListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3701DCAA16E9D93F00896D7D /* GameListViewController.m */; };
-		3701DCAE16E9DBC100896D7D /* GameViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3701DCAD16E9DBC100896D7D /* GameViewController.m */; };
 		3701DD0616EB171800896D7D /* blackbox-96d24.png in Resources */ = {isa = PBXBuildFile; fileRef = 3701DCE216EB171800896D7D /* blackbox-96d24.png */; };
 		3701DD0716EB171800896D7D /* bridges-96d24.png in Resources */ = {isa = PBXBuildFile; fileRef = 3701DCE316EB171800896D7D /* bridges-96d24.png */; };
 		3701DD0816EB171800896D7D /* cube-96d24.png in Resources */ = {isa = PBXBuildFile; fileRef = 3701DCE416EB171800896D7D /* cube-96d24.png */; };
@@ -118,11 +115,7 @@
 		3701DD2716EB171800896D7D /* unequal-96d24.png in Resources */ = {isa = PBXBuildFile; fileRef = 3701DD0316EB171800896D7D /* unequal-96d24.png */; };
 		3701DD2816EB171800896D7D /* unruly-96d24.png in Resources */ = {isa = PBXBuildFile; fileRef = 3701DD0416EB171800896D7D /* unruly-96d24.png */; };
 		3701DD2916EB171800896D7D /* untangle-96d24.png in Resources */ = {isa = PBXBuildFile; fileRef = 3701DD0516EB171800896D7D /* untangle-96d24.png */; };
-		3701DD2F16EDBC9F00896D7D /* GameTypeController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3701DD2E16EDBC9E00896D7D /* GameTypeController.m */; };
-		3701DD3216EDC7F200896D7D /* GameSettingsController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3701DD3116EDC7F200896D7D /* GameSettingsController.m */; };
-		3701DD3516EEEC9A00896D7D /* GameSettingsChoiceController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3701DD3416EEEC9900896D7D /* GameSettingsChoiceController.m */; };
 		3701DD3716F12AE000896D7D /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3701DD3616F12ADF00896D7D /* AudioToolbox.framework */; };
-		3701DD3A16F3959400896D7D /* GameHelpController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3701DD3916F3959300896D7D /* GameHelpController.m */; };
 		3701DD6516F3997400896D7D /* blackbox.html in Resources */ = {isa = PBXBuildFile; fileRef = 3701DD3C16F3997300896D7D /* blackbox.html */; };
 		3701DD6616F3997400896D7D /* bridges.html in Resources */ = {isa = PBXBuildFile; fileRef = 3701DD3D16F3997300896D7D /* bridges.html */; };
 		3701DD6716F3997400896D7D /* common.html in Resources */ = {isa = PBXBuildFile; fileRef = 3701DD3E16F3997300896D7D /* common.html */; };
@@ -313,12 +306,6 @@
 		3701DCA216E7353300896D7D /* penrose.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = penrose.h; sourceTree = SOURCE_ROOT; };
 		3701DCA316E7355500896D7D /* loopgen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = loopgen.h; sourceTree = SOURCE_ROOT; };
 		3701DCA416E7391800896D7D /* printing.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = printing.c; sourceTree = SOURCE_ROOT; };
-		3701DCA616E85D5D00896D7D /* GameView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GameView.h; sourceTree = SOURCE_ROOT; };
-		3701DCA716E85D5D00896D7D /* GameView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GameView.m; sourceTree = SOURCE_ROOT; };
-		3701DCA916E9D93E00896D7D /* GameListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GameListViewController.h; sourceTree = SOURCE_ROOT; };
-		3701DCAA16E9D93F00896D7D /* GameListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GameListViewController.m; sourceTree = SOURCE_ROOT; };
-		3701DCAC16E9DBC000896D7D /* GameViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GameViewController.h; sourceTree = SOURCE_ROOT; };
-		3701DCAD16E9DBC100896D7D /* GameViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GameViewController.m; sourceTree = SOURCE_ROOT; };
 		3701DCE216EB171800896D7D /* blackbox-96d24.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "blackbox-96d24.png"; path = "icons/blackbox-96d24.png"; sourceTree = "<group>"; };
 		3701DCE316EB171800896D7D /* bridges-96d24.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "bridges-96d24.png"; path = "icons/bridges-96d24.png"; sourceTree = "<group>"; };
 		3701DCE416EB171800896D7D /* cube-96d24.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "cube-96d24.png"; path = "icons/cube-96d24.png"; sourceTree = "<group>"; };
@@ -355,15 +342,7 @@
 		3701DD0316EB171800896D7D /* unequal-96d24.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "unequal-96d24.png"; path = "icons/unequal-96d24.png"; sourceTree = "<group>"; };
 		3701DD0416EB171800896D7D /* unruly-96d24.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "unruly-96d24.png"; path = "icons/unruly-96d24.png"; sourceTree = "<group>"; };
 		3701DD0516EB171800896D7D /* untangle-96d24.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "untangle-96d24.png"; path = "icons/untangle-96d24.png"; sourceTree = "<group>"; };
-		3701DD2D16EDBC9E00896D7D /* GameTypeController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GameTypeController.h; sourceTree = SOURCE_ROOT; };
-		3701DD2E16EDBC9E00896D7D /* GameTypeController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GameTypeController.m; sourceTree = SOURCE_ROOT; };
-		3701DD3016EDC7F100896D7D /* GameSettingsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GameSettingsController.h; sourceTree = SOURCE_ROOT; };
-		3701DD3116EDC7F200896D7D /* GameSettingsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GameSettingsController.m; sourceTree = SOURCE_ROOT; };
-		3701DD3316EEEC9800896D7D /* GameSettingsChoiceController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GameSettingsChoiceController.h; sourceTree = SOURCE_ROOT; };
-		3701DD3416EEEC9900896D7D /* GameSettingsChoiceController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GameSettingsChoiceController.m; sourceTree = SOURCE_ROOT; };
 		3701DD3616F12ADF00896D7D /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
-		3701DD3816F3959100896D7D /* GameHelpController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GameHelpController.h; sourceTree = SOURCE_ROOT; };
-		3701DD3916F3959300896D7D /* GameHelpController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GameHelpController.m; sourceTree = SOURCE_ROOT; };
 		3701DD3C16F3997300896D7D /* blackbox.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = blackbox.html; sourceTree = "<group>"; };
 		3701DD3D16F3997300896D7D /* bridges.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = bridges.html; sourceTree = "<group>"; };
 		3701DD3E16F3997300896D7D /* common.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = common.html; sourceTree = "<group>"; };
@@ -523,27 +502,13 @@
 		3701DC0E16E730ED00896D7D /* Puzzles */ = {
 			isa = PBXGroup;
 			children = (
-				3701DCA916E9D93E00896D7D /* GameListViewController.h */,
 				115DFEBC240FE30900BC5FF8 /* GameListViewController.swift */,
-				3701DCAA16E9D93F00896D7D /* GameListViewController.m */,
-				3701DCAC16E9DBC000896D7D /* GameViewController.h */,
-				3701DCAD16E9DBC100896D7D /* GameViewController.m */,
 				115DFEBE24100C1400BC5FF8 /* GameViewController.swift */,
 				115DFEC024100D1700BC5FF8 /* Puzzles-Bridging-Header.h */,
-				3701DCA616E85D5D00896D7D /* GameView.h */,
-				3701DCA716E85D5D00896D7D /* GameView.m */,
 				115DFEC22416507100BC5FF8 /* GameTypeController.swift */,
 				115DFEC4241656F500BC5FF8 /* GameHelpController.swift */,
 				115DFEC624199B9400BC5FF8 /* GameSettingsController.swift */,
 				115DFEC8241A598A00BC5FF8 /* GameSettingsChoiceController.swift */,
-				3701DD2D16EDBC9E00896D7D /* GameTypeController.h */,
-				3701DD2E16EDBC9E00896D7D /* GameTypeController.m */,
-				3701DD3016EDC7F100896D7D /* GameSettingsController.h */,
-				3701DD3116EDC7F200896D7D /* GameSettingsController.m */,
-				3701DD3316EEEC9800896D7D /* GameSettingsChoiceController.h */,
-				3701DD3416EEEC9900896D7D /* GameSettingsChoiceController.m */,
-				3701DD3816F3959100896D7D /* GameHelpController.h */,
-				3701DD3916F3959300896D7D /* GameHelpController.m */,
 				3701DC2E16E7330700896D7D /* Core */,
 				3701DC0F16E730ED00896D7D /* Supporting Files */,
 				115DFEBA240FCC5600BC5FF8 /* GameView.swift */,
@@ -1072,15 +1037,8 @@
 				3701DC9B16E734A800896D7D /* unruly.c in Sources */,
 				3701DC9C16E734A800896D7D /* untangle.c in Sources */,
 				3701DCA516E7391800896D7D /* printing.c in Sources */,
-				3701DCA816E85D5D00896D7D /* GameView.m in Sources */,
-				3701DCAB16E9D93F00896D7D /* GameListViewController.m in Sources */,
 				115DFEBD240FE30900BC5FF8 /* GameListViewController.swift in Sources */,
-				3701DCAE16E9DBC100896D7D /* GameViewController.m in Sources */,
-				3701DD2F16EDBC9F00896D7D /* GameTypeController.m in Sources */,
-				3701DD3216EDC7F200896D7D /* GameSettingsController.m in Sources */,
-				3701DD3516EEEC9A00896D7D /* GameSettingsChoiceController.m in Sources */,
 				115DFEC5241656F500BC5FF8 /* GameHelpController.swift in Sources */,
-				3701DD3A16F3959400896D7D /* GameHelpController.m in Sources */,
 				115DFEB32409527200BC5FF8 /* matching.c in Sources */,
 				3786A3271AA83A9000B052ED /* flood.c in Sources */,
 				115DFEB7240C0FEA00BC5FF8 /* findloop.c in Sources */,
