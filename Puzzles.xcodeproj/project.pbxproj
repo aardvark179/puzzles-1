@@ -468,9 +468,6 @@
 		3701DBFC16E730ED00896D7D = {
 			isa = PBXGroup;
 			children = (
-				119B443124240E4000E2A70B /* utils.c */,
-				11ACE42424224E280033853C /* utils.swift */,
-				115DFEC12411528700BC5FF8 /* frontend.h */,
 				115DFEB8240C156700BC5FF8 /* Launch Screen.storyboard */,
 				37DDFDB216F45C53007B6287 /* CoreText.framework */,
 				371ADFA216F432CD00A529A2 /* QuartzCore.framework */,
@@ -502,17 +499,20 @@
 		3701DC0E16E730ED00896D7D /* Puzzles */ = {
 			isa = PBXGroup;
 			children = (
-				115DFEBC240FE30900BC5FF8 /* GameListViewController.swift */,
-				115DFEBE24100C1400BC5FF8 /* GameViewController.swift */,
+				119B443124240E4000E2A70B /* utils.c */,
+				115DFEC12411528700BC5FF8 /* frontend.h */,
 				115DFEC024100D1700BC5FF8 /* Puzzles-Bridging-Header.h */,
-				115DFEC22416507100BC5FF8 /* GameTypeController.swift */,
+				11800764241C008500E7658A /* AppDelegate.swift */,
 				115DFEC4241656F500BC5FF8 /* GameHelpController.swift */,
-				115DFEC624199B9400BC5FF8 /* GameSettingsController.swift */,
+				115DFEBC240FE30900BC5FF8 /* GameListViewController.swift */,
 				115DFEC8241A598A00BC5FF8 /* GameSettingsChoiceController.swift */,
+				115DFEC624199B9400BC5FF8 /* GameSettingsController.swift */,
+				115DFEC22416507100BC5FF8 /* GameTypeController.swift */,
+				115DFEBA240FCC5600BC5FF8 /* GameView.swift */,
+				115DFEBE24100C1400BC5FF8 /* GameViewController.swift */,
+				11ACE42424224E280033853C /* utils.swift */,
 				3701DC2E16E7330700896D7D /* Core */,
 				3701DC0F16E730ED00896D7D /* Supporting Files */,
-				115DFEBA240FCC5600BC5FF8 /* GameView.swift */,
-				11800764241C008500E7658A /* AppDelegate.swift */,
 			);
 			path = Puzzles;
 			sourceTree = "<group>";
