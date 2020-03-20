@@ -40,7 +40,7 @@ class GameView : UIView, GameSettingsDelegate {
     var touchXPoints: Int32 = 0
     var touchYPoints: Int32 = 0
     var touchXPixels: Int32 = 0
-    var touchYPizels: Int32 = 0
+    var touchYPixels: Int32 = 0
     var touchButton: Int = 0
     var touchTimer: Timer? = nil
     var toolbar: UIToolbar?
@@ -294,16 +294,6 @@ class GameView : UIView, GameSettingsDelegate {
         }
     }
     
-    fileprivate func adjustDragPosition(x: inout Int32, y: inout Int32) {
-        if (theGame == untangle_ptr) {
-            let ts = midend_tilesize(midend)
-            x = max(ts/8, x)
-            x = min(Int32(gameRect.width*contentScaleFactor / 8 - 1), x)
-            y = max(ts/8, y)
-            y = min(Int32(gameRect.height*contentScaleFactor / 8 - 1), y)
-        }
-    }
-    
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         let touch = touches.first
         var p = touch!.location(in: self)
@@ -315,11 +305,10 @@ class GameView : UIView, GameSettingsDelegate {
         touchXPoints = Int32(p.x)
         touchYPoints = Int32(p.y)
         touchXPixels = Int32(p.x * contentScaleFactor)
-        touchYPizels = Int32(p.y * contentScaleFactor)
-        adjustDragPosition(x: &touchXPixels, y: &touchYPizels)
+        touchYPixels = Int32(p.y * contentScaleFactor)
         touchButton = 0
         if (netCentreMode()) {
-            midend_process_key(midend, touchXPixels, touchYPizels, 0x03)
+            midend_process_key(midend, touchXPixels, touchYPixels, 0x03)
         }
     }
     
@@ -330,9 +319,8 @@ class GameView : UIView, GameSettingsDelegate {
         p.y -= gameRect.origin.y
         let xPoints: Int32 = Int32(min(gameRect.width - 1, max(p.x, 0)))
         let yPoints: Int32 = Int32(min(gameRect.height - 1, max(p.y, 0)))
-        var xPixels = xPoints * Int32(contentScaleFactor)
-        var yPixels = yPoints * Int32(contentScaleFactor)
-        adjustDragPosition(x: &xPixels, y: &yPixels)
+        let xPixels = xPoints * Int32(contentScaleFactor)
+        let yPixels = yPoints * Int32(contentScaleFactor)
         if (netCentreMode()) {
             midend_process_key(midend, xPixels, yPixels, 0x03)
         } else if (netShiftMode()) {
@@ -345,20 +333,20 @@ class GameView : UIView, GameSettingsDelegate {
                 midend_process_key(midend, -1, -1, Int32(MOD_SHFT | CURSOR_RIGHT))
                 touchXPixels += ts
             }
-            while (touchYPizels <= yPixels - ts) {
+            while (touchYPixels <= yPixels - ts) {
                 midend_process_key(midend, -1, -1, Int32(MOD_SHFT | CURSOR_UP))
-                touchYPizels -= ts
+                touchYPixels -= ts
             }
-            while (touchYPizels >= yPixels - ts) {
+            while (touchYPixels >= yPixels - ts) {
                 midend_process_key(midend, -1, -1, Int32(MOD_SHFT | CURSOR_DOWN))
-                touchYPizels += ts
+                touchYPixels += ts
             }
         } else {
             if (touchState == 1) {
                 if (abs(xPoints + touchXPoints) >= 10 || abs(yPoints + touchYPoints) >= 10) {
                     touchTimer?.invalidate()
                     touchTimer = nil
-                    midend_process_key(midend, touchXPixels, touchYPizels, ButtonDown[touchButton]);
+                    midend_process_key(midend, touchXPixels, touchYPixels, ButtonDown[touchButton]);
                     touchState = 2;
                 }
             }
@@ -376,14 +364,13 @@ class GameView : UIView, GameSettingsDelegate {
         p.y -= gameRect.origin.y
         let xPoints: Int32 = Int32(min(gameRect.width - 1, max(p.x, 0)))
         let yPoints: Int32 = Int32(min(gameRect.height - 1, max(p.y, 0)))
-        var xPixels = xPoints * Int32(contentScaleFactor)
-        var yPixels = yPoints * Int32(contentScaleFactor)
-        adjustDragPosition(x: &xPixels, y: &yPixels)
+        let xPixels = xPoints * Int32(contentScaleFactor)
+        let yPixels = yPoints * Int32(contentScaleFactor)
         if (netCentreMode() || netShiftMode()) {
             return
         } else {
             if (touchState == 1) {
-                midend_process_key(midend, touchXPixels, touchYPizels, ButtonDown[touchButton])
+                midend_process_key(midend, touchXPixels, touchYPixels, ButtonDown[touchButton])
             }
             midend_process_key(midend, xPixels, yPixels, ButtonUp[touchButton])
         }
@@ -407,7 +394,7 @@ class GameView : UIView, GameSettingsDelegate {
             } else {
                 touchButton = 1
             }
-            midend_process_key(midend, touchXPixels, touchYPizels, ButtonDown[touchButton])
+            midend_process_key(midend, touchXPixels, touchYPixels, ButtonDown[touchButton])
             touchState = 2
             UIDevice.current.playInputClick()
         }
