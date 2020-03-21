@@ -78,22 +78,29 @@ class GameListViewCell : UICollectionViewCell {
     let image: UIImageView
     let details: UILabel
     let inProgress: UIImageView
+    var gridConstraints: [NSLayoutConstraint]?
+    var listConstraints: [NSLayoutConstraint]?
     
     override init(frame: CGRect) {
         label = UILabel()
         label.tag = 1
+        label.numberOfLines = 1
         label.font = .boldSystemFont(ofSize: 16)
+        label.translatesAutoresizingMaskIntoConstraints = false
         
         image = UIImageView()
         image.tag = 2
+        image.translatesAutoresizingMaskIntoConstraints = false
 
         details = UILabel()
         details.numberOfLines = 0
         details.tag = 3
+        details.translatesAutoresizingMaskIntoConstraints = false
         
         inProgress = UIImageView()
         inProgress.tag = 4
         inProgress.image = UIImage(named: "inprogress.png")
+        inProgress.translatesAutoresizingMaskIntoConstraints = false
         
         super.init(frame: frame)
         if #available(iOS 13.0, *) {
@@ -102,21 +109,66 @@ class GameListViewCell : UICollectionViewCell {
             contentView.backgroundColor = .white
         }
         
-        relayoutCell()
         contentView.addSubview(label)
         contentView.addSubview(image)
         contentView.addSubview(details)
         contentView.addSubview(inProgress)
+        createContrsints()
+        enableConstraints()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        if (traitCollection.horizontalSizeClass != previousTraitCollection?.horizontalSizeClass || traitCollection.verticalSizeClass != previousTraitCollection?.verticalSizeClass) {
-            relayoutCell()
+    fileprivate func enableConstraints() {
+        if (traitCollection.horizontalSizeClass == .compact) {
+            NSLayoutConstraint.deactivate(gridConstraints!)
+            NSLayoutConstraint.activate(listConstraints!)
+        } else {
+            NSLayoutConstraint.deactivate(listConstraints!)
+            NSLayoutConstraint.activate(gridConstraints!)
         }
+    }
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        if (traitCollection.horizontalSizeClass != previousTraitCollection?.horizontalSizeClass) {
+            enableConstraints()
+        }
+    }
+    
+    func createContrsints() {
+        gridConstraints = [
+            label.centerXAnchor.constraint(equalTo: contentView.layoutMarginsGuide.centerXAnchor),
+            label.heightAnchor.constraint(equalToConstant: 31),
+            image.centerXAnchor.constraint(equalTo: label.centerXAnchor),
+            image.heightAnchor.constraint(equalToConstant: 96),
+            image.widthAnchor.constraint(equalTo: image.heightAnchor),
+            details.centerXAnchor.constraint(equalTo: label.centerXAnchor),
+            label.topAnchor.constraint(equalTo: contentView.layoutMarginsGuide.topAnchor),
+            image.topAnchor.constraint(equalTo: label.bottomAnchor),
+            details.topAnchor.constraint(equalTo: image.bottomAnchor, constant: 5),
+            details.widthAnchor.constraint(lessThanOrEqualTo: contentView.layoutMarginsGuide.widthAnchor),
+            inProgress.leftAnchor.constraint(greaterThanOrEqualTo: image.rightAnchor),
+            inProgress.rightAnchor.constraint(equalTo: contentView.layoutMarginsGuide.rightAnchor),
+            inProgress.centerYAnchor.constraint(equalTo: image.centerYAnchor)
+        ]
+        listConstraints = [
+            image.leftAnchor.constraint(equalTo: contentView.layoutMarginsGuide.leftAnchor),
+            image.topAnchor.constraint(equalTo: contentView.layoutMarginsGuide.topAnchor),
+            image.heightAnchor.constraint(equalToConstant: 96),
+            image.widthAnchor.constraint(equalTo: image.heightAnchor),
+            inProgress.rightAnchor.constraint(equalTo: contentView.layoutMarginsGuide.rightAnchor),
+            inProgress.widthAnchor.constraint(equalToConstant: 40),
+            inProgress.heightAnchor.constraint(equalTo: inProgress.widthAnchor),
+            inProgress.centerYAnchor.constraint(equalTo: image.centerYAnchor),
+            label.leftAnchor.constraint(equalTo: image.rightAnchor, constant: 2),
+            label.topAnchor.constraint(equalTo: contentView.layoutMarginsGuide.topAnchor),
+            label.heightAnchor.constraint(equalToConstant: 26),
+            label.rightAnchor.constraint(lessThanOrEqualTo: inProgress.leftAnchor, constant: 2),
+            details.leftAnchor.constraint(equalTo: label.leftAnchor),
+            details.rightAnchor.constraint(equalTo: inProgress.leftAnchor, constant: -2),
+            details.topAnchor.constraint(equalTo: label.bottomAnchor, constant: 5)
+        ]
     }
     
     func relayoutCell() {
