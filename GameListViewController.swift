@@ -257,7 +257,7 @@ class GameListViewController : UICollectionViewController, GameViewControllerSav
         } else {
             collectionView.backgroundColor = .lightGray
         }
-        self.title = "Puzzle"
+        self.title = "Puzzles"
         self.gamesInProgress = Set<String>()
         let files: [String]
         do {
