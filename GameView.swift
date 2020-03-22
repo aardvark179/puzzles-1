@@ -26,7 +26,6 @@ func bridge<T : AnyObject>(ptr : UnsafeMutableRawPointer) -> T {
     return Unmanaged<T>.fromOpaque(ptr).takeUnretainedValue()
 }
 
-
 class GameView : UIView, GameSettingsDelegate {
     var nc: UINavigationController
     var theGame: UnsafePointer<game>
@@ -294,18 +293,30 @@ class GameView : UIView, GameSettingsDelegate {
         }
     }
     
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+    fileprivate func transformTouch(touches: Set<UITouch>, inRect: Bool) -> (Int32, Int32, Int32, Int32) {
         let touch = touches.first
         var p = touch!.location(in: self)
         p.x -= gameRect.origin.x
         p.y -= gameRect.origin.y
+        let pointX: Int32
+        let pointY: Int32
+        if (inRect) {
+            pointX = Int32(min(gameRect.width - 1, max(p.x, 0)))
+            pointY = Int32(min(gameRect.height - 1, max(p.y, 0)))
+        } else {
+            pointX = Int32(p.x)
+            pointY = Int32(p.y)
+        }
+        let pixelX: Int32 = Int32(p.x * contentScaleFactor)
+        let pixelY: Int32 = Int32(p.y * contentScaleFactor)
+        return (pointX, pointY, pixelX, pixelY)
+    }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        (touchXPoints, touchYPoints, touchXPixels, touchYPixels) = transformTouch(touches: touches, inRect: false)
         touchTimer = Timer(timeInterval: TimeInterval(0.5), target: self, selector: #selector(handleTouchTimer), userInfo: nil, repeats: false)
         RunLoop.current.add(touchTimer!, forMode: RunLoop.Mode.default)
         touchState = 1
-        touchXPoints = Int32(p.x)
-        touchYPoints = Int32(p.y)
-        touchXPixels = Int32(p.x * contentScaleFactor)
-        touchYPixels = Int32(p.y * contentScaleFactor)
         touchButton = 0
         if (netCentreMode()) {
             midend_process_key(midend, touchXPixels, touchYPixels, 0x03)
@@ -313,14 +324,7 @@ class GameView : UIView, GameSettingsDelegate {
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-        let touch = touches.first
-        var p = touch!.location(in: self)
-        p.x -= gameRect.origin.x
-        p.y -= gameRect.origin.y
-        let xPoints: Int32 = Int32(min(gameRect.width - 1, max(p.x, 0)))
-        let yPoints: Int32 = Int32(min(gameRect.height - 1, max(p.y, 0)))
-        let xPixels = xPoints * Int32(contentScaleFactor)
-        let yPixels = yPoints * Int32(contentScaleFactor)
+        let (xPoints, yPoints, xPixels, yPixels) = transformTouch(touches: touches, inRect: true)
         if (netCentreMode()) {
             midend_process_key(midend, xPixels, yPixels, 0x03)
         } else if (netShiftMode()) {
@@ -358,14 +362,7 @@ class GameView : UIView, GameSettingsDelegate {
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        let touch = touches.first
-        var p = touch!.location(in: self)
-        p.x -= gameRect.origin.x
-        p.y -= gameRect.origin.y
-        let xPoints: Int32 = Int32(min(gameRect.width - 1, max(p.x, 0)))
-        let yPoints: Int32 = Int32(min(gameRect.height - 1, max(p.y, 0)))
-        let xPixels = xPoints * Int32(contentScaleFactor)
-        let yPixels = yPoints * Int32(contentScaleFactor)
+        let (_, _   , xPixels, yPixels) = transformTouch(touches: touches, inRect: true)
         if (netCentreMode() || netShiftMode()) {
             return
         } else {
