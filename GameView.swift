@@ -26,11 +26,9 @@ func bridge<T : AnyObject>(ptr : UnsafeMutableRawPointer) -> T {
     return Unmanaged<T>.fromOpaque(ptr).takeUnretainedValue()
 }
 
-class GameView : UIView, GameSettingsDelegate {
-    var nc: UINavigationController
+class GameView : UIView {
     var theGame: UnsafePointer<game>
     var midend: OpaquePointer!
-    var fe: frontend = frontend(gv: nil, colours: nil, ncolours: 0, clipping: false, activate_timer: {fe in attach_timer(fe: fe!)}, deactivate_timer: {fe in detach_timer(fe: fe!)}, default_colour: {fe, output in frontendDefaultColour(fe: fe, output: output)})
     var usableFrame: CGRect!
     var gameRect: CGRect!
     var timer: Timer!
@@ -48,47 +46,14 @@ class GameView : UIView, GameSettingsDelegate {
     var bitmap: CGContext?
     var blitters: Set<Blitter> = Set()
  
-    init(nc:UINavigationController, game: UnsafePointer<game>, saved:String?, inProgess:Bool, frame:CGRect) {
-        self.nc = nc
+    init(game: UnsafePointer<game>, saved:String?, inProgess:Bool, frame:CGRect) {
+        self.midend = nil
         theGame = game
         super.init(frame: frame)
-        fe.gv = bridge(obj: self)
-            
-        // Set the environment to set the preferred tile size...
-        let key = "\(String(cString: theGame.pointee.name).uppercased().replacingOccurrences(of: " ", with: ""))_TILESIZE"
-        let value = "\(theGame.pointee.preferred_tilesize * 4)"
-        setenv(key, value, 1)
-        
-        midend = midend_new(&fe, theGame, &swift_drawing_api, bridge(obj: self));
-        fe.colours = midend_colours(midend, &fe.ncolours);
-        self.backgroundColor = UIColor.init(red: CGFloat(fe.colours![0]), green: CGFloat(fe.colours![1]), blue: CGFloat(fe.colours![2]), alpha: 1)
-        if (saved != nil) {
-            let ctx = StringReadConext(save: saved!, position: 0)
-            let msg = midend_deserialise(midend, {ctx, buffer, length in saveGameRead(ctx: ctx, buffer: buffer, length: length)}, bridge(obj: ctx))
-            if (msg != nil) {
-                let alert = UIAlertController(title: "Puzzles", message: String(cString: msg!), preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
-                nc.present(alert, animated: false, completion: nil)
-                startNewGame()
-            } else if (!inProgess) {
-                startNewGame()
-            }
-        } else {
-            if (theGame == pattern_ptr && traitCollection.horizontalSizeClass == .compact || traitCollection.verticalSizeClass == .compact) {
-                midend_game_id(midend, "S")
-            }
-            startNewGame()
-        }
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-    
-    deinit {
-        if (midend != nil) {
-            midend_free(midend);
-        }
     }
     
     fileprivate func netCentreMode() -> Bool {
@@ -99,33 +64,7 @@ class GameView : UIView, GameSettingsDelegate {
         return (theGame == net_ptr) && buttons["Shift"]?.style == .done
     }
     
-    func startNewGame() {
-        let m: OpaquePointer = self.midend
-        self.midend = nil
-        let window: UIWindow = UIApplication.shared.windows[0]
-        
-        // Create a clear overlau to consume touches during puzzle generation
-        let overlay: UIView = UIView.init(frame: window.rootViewController!.view.bounds)
-        window.rootViewController!.view.addSubview(overlay)
-        
-        let (box, aiv) = createProgressIndicator(overlay: overlay)
-        
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + .milliseconds(250)) {
-            box.isHidden = false
-        }
-        
-        DispatchQueue.global().async {
-            midend_new_game(m)
-            DispatchQueue.main.async {
-                aiv.stopAnimating()
-                overlay.removeFromSuperview()
-                self.midend = m
-                self.layoutSubviews()
-            }
-        }
-    }
-    
-    fileprivate func createProgressIndicator(overlay: UIView) -> (UIView, UIActivityIndicatorView) {
+    func createProgressIndicator(overlay: UIView) -> (UIView, UIActivityIndicatorView) {
         let box = UIView(frame: CGRect(x: (overlay.bounds.width - 200) / 2, y: (overlay.bounds.height - 50) / 2, width: 200, height: 50))
         box.backgroundColor = UIColor.black
         box.isHidden = true
@@ -145,24 +84,6 @@ class GameView : UIView, GameSettingsDelegate {
         aiv.startAnimating()
         
         return (box, aiv)
-    }
-    
-    fileprivate func buildToolbar(r: CGRect) {
-        if (toolbar != nil) {
-            toolbar!.frame = r
-        } else {
-            toolbar = UIToolbar(frame: r)
-            let items = [
-                UIBarButtonItem(title: "Game", style: .plain, target: self, action: #selector(doGameMenu)),
-                UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil),
-                UIBarButtonItem(barButtonSystemItem: .undo,  target: self, action: #selector(doUndo)),
-                UIBarButtonItem(barButtonSystemItem: .redo, target: self, action: #selector(doRedo)),
-                UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil),
-                UIBarButtonItem(title: "Type", style: .plain, target: self,    action: #selector(doType)),
-            ]
-            toolbar!.setItems(items, animated: false)
-            addSubview(toolbar!)
-        }
     }
     
     fileprivate func buildStatusBar(topMargin: CGFloat, usableHeight: inout CGFloat) {
@@ -459,16 +380,16 @@ class GameView : UIView, GameSettingsDelegate {
         if (self.midend == nil) {
             return
         }
-        let toolbarHeight: CGFloat = self.traitCollection.verticalSizeClass == UIUserInterfaceSizeClass.compact ? 32 : 44
+        let toolbarHeight: CGFloat = 0
         var topMargin: CGFloat = 0
         if #available(iOS 11.0, *) {
             topMargin += safeAreaInsets.top
         }
-        var usableHeight = self.frame.height - toolbarHeight - topMargin
+        var usableHeight = self.frame.height - topMargin
+        if #available(iOS 11.0, *) {
+            usableHeight = usableHeight - safeAreaInsets.bottom
+        }
         
-        let r: CGRect = CGRect(x: 0, y: topMargin + usableHeight, width: self.frame.width, height: toolbarHeight)
-        
-        buildToolbar(r: r)
         buildStatusBar(topMargin: topMargin, usableHeight: &usableHeight)
         buildGameButtons(toolbarHeight: toolbarHeight, topMargin: topMargin, usableHeight: &usableHeight)
         usableFrame = CGRect(x: 0, y: topMargin, width: self.frame.width, height: usableHeight)
@@ -485,82 +406,6 @@ class GameView : UIView, GameSettingsDelegate {
         midend_force_redraw(midend)
         setNeedsDisplay()
     }
-    
-    @objc func doGameMenu() {
-        let gameMenu = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        gameMenu.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: {_ in }))
-        gameMenu.addAction(UIAlertAction(title: "New Game", style: .destructive, handler: {_ in self.startNewGame() }))
-        gameMenu.addAction(UIAlertAction(title: "Specific Game", style: .default, handler: {_ in self.doSpecificGame() }))
-        gameMenu.addAction(UIAlertAction(title: "Specific Random Seed", style: .default, handler: {_ in self.doSpecificSeed() }))
-        gameMenu.addAction(UIAlertAction(title: "Restart", style: .default, handler: {_ in self.doRestart() }))
-        gameMenu.addAction(UIAlertAction(title: "Solve", style: .default, handler: {_ in self.doSolve() }))
-        
-        let pop = gameMenu.popoverPresentationController
-        pop?.barButtonItem = toolbar!.items![0]
-        nc.present(gameMenu, animated: true, completion: nil)
-    }
-    
-    func doSpecificGame() {
-        var winTitle: CharPtr = nil
-        let config = midend_get_config(midend, Int32(CFG_DESC), &winTitle)
-        nc.pushViewController(GameSettingsController(game: theGame, config_items: config!, type: CFG_DESC, title: String(cString: winTitle!), delegate: self), animated: true)
-        free(winTitle)
-    }
-    
-    func doSpecificSeed() {
-        var winTitle: CharPtr = nil
-        let config = midend_get_config(midend, Int32(CFG_SEED), &winTitle)
-        nc.pushViewController(GameSettingsController(game: theGame, config_items: config!, type: CFG_SEED, title: String(cString: winTitle!), delegate: self), animated: true)
-        free(winTitle)
-    }
-    
-    func didApply(config: UnsafeMutablePointer<config_item>) {
-        let msg = midend_game_id(midend, config[0].name)
-        if (msg != nil) {
-            let alert = UIAlertController(title: "Puzzles", message: String(cString: msg!), preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "Close", style: .cancel, handler: nil))
-            nc.present(alert, animated: false, completion: nil)
-        }
-        startNewGame()
-        nc.popViewController(animated: true)
-    }
-    
-    @objc func doUndo() {
-        midend_process_key(midend, -1, -1, Int32(Character("u").asciiValue!));
-    }
-    
-    @objc func doRedo() {
-        midend_process_key(midend, -1, -1, Int32(Character("r").asciiValue!)&0x1F);
-    }
-    
-    func doRestart() {
-        midend_restart_game(midend)
-    }
-
-    func doSolve() {
-        let msg = midend_solve(midend)
-        if (msg != nil) {
-            let alert = UIAlertController(title: "PUzzles", message: String(cString: msg!), preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "Close", style: .cancel, handler: nil))
-            nc.present(alert, animated: false, completion: nil)
-        }
-    }
-    
-    @objc func doType() {
-        nc.pushViewController(GameTypeController(game: theGame, midend: midend, gameView: self), animated: true)
-    }
-    
-    func didApply(item: UnsafeMutablePointer<config_item>) {
-        let msg = midend_game_id(midend, item[0].name)
-        if (msg != nil) {
-            let alert = UIAlertController(title: "Puzzles", message: String(cString: msg!), preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
-            nc.present(alert, animated: false, completion: nil)
-            return
-        }
-        startNewGame()
-        nc.popToRootViewController(animated: true)
-    }
 }
 
 fileprivate func saveGameWrite(ctx: VoidPtr, buffer: ConstVoidPtr, length: Int32) -> Void {
@@ -568,7 +413,7 @@ fileprivate func saveGameWrite(ctx: VoidPtr, buffer: ConstVoidPtr, length: Int32
     str.append(String.init(bytesNoCopy: UnsafeMutableRawPointer(mutating: buffer!), length: Int(length), encoding: .utf8, freeWhenDone: false)!)
 }
 
-fileprivate class StringReadConext {
+class StringReadConext {
     let data: [UInt8]
     var position: Int
     
@@ -576,15 +421,6 @@ fileprivate class StringReadConext {
         self.position = position
         data = Array(save.data(using: .utf8)!)
     }
-}
-
-fileprivate func saveGameRead(ctx: VoidPtr, buffer: VoidPtr, length: Int32) -> Bool {
-    let srctx: StringReadConext = bridge(ptr: ctx!)
-    let ptr = UnsafeMutablePointer<UInt8>(OpaquePointer(buffer))
-    let bufPtr = UnsafeMutableBufferPointer<UInt8>(start: ptr, count: Int(length))
-    srctx.data.copyBytes(to: bufPtr, from: srctx.position..<(srctx.position + Int(length)))
-    srctx.position += Int(length)
-    return true
 }
 
 let swift_draw_text: (@convention(c) (VoidPtr, Int32, Int32, Int32, Int32, Int32, Int32, ConstCharPtr) -> Void)? = { handle, x, y, fontType, fontSize, align, colour, text in drawText(handle: handle, x: x, y: y, fontType: fontType, fontSize: fontSize, align: align, colour: colour, text: text)}
@@ -632,27 +468,36 @@ var swift_drawing_api: drawing_api = drawing_api(
     text_fallback: swift_text_fallback,
     draw_thick_line: nil)
 
-fileprivate func getGV(handle: VoidPtr) -> GameView {
+fileprivate func getGVC(handle: VoidPtr) -> GameViewController {
     return bridge(ptr: UnsafeMutableRawPointer(OpaquePointer(handle))!)
 }
-fileprivate func rgba(gv: GameView, colour: Int32) -> [CGFloat] {
-    return [CGFloat(gv.fe.colours![Int(colour) * 3 + 0]),
-            CGFloat(gv.fe.colours![Int(colour) * 3 + 1]),
-            CGFloat(gv.fe.colours![Int(colour) * 3 + 2]),
+
+fileprivate func getGV(handle: VoidPtr) -> GameView {
+    return getGVC(handle: handle).gameView!
+}
+
+fileprivate func getBitmap(handle: VoidPtr) -> CGContext {
+    return getGVC(handle: handle).gameView!.bitmap!
+}
+
+fileprivate func rgba(gvc: GameViewController, colour: Int32) -> [CGFloat] {
+    return [CGFloat(gvc.fe.colours![Int(colour) * 3 + 0]),
+            CGFloat(gvc.fe.colours![Int(colour) * 3 + 1]),
+            CGFloat(gvc.fe.colours![Int(colour) * 3 + 2]),
             1
     ]
 }
 fileprivate func drawText(handle: VoidPtr, x: Int32, y: Int32, fontType: Int32, fontSize: Int32, align: Int32, colour: Int32, text: ConstCharPtr?) -> Void {
-    let gv = getGV(handle: handle)
+    let gvc = getGVC(handle: handle)
     let str = String(cString: text!!)
     let font = CTFontCreateWithName("Helvetica" as CFString, CGFloat(fontSize), nil)
     let cs = CGColorSpaceCreateDeviceRGB()
-    let comps: [CGFloat] = rgba(gv: gv, colour: colour)
+    let comps: [CGFloat] = rgba(gvc: gvc, colour: colour)
     let colour = CGColor(colorSpace: cs, components: comps)
     let attributes: Dictionary<CFString, Any?> = [kCTFontAttributeName: font, kCTForegroundColorAttributeName: colour]
     let attrStr = CFAttributedStringCreate(nil, str as CFString, attributes as CFDictionary)
     let line = CTLineCreateWithAttributedString(attrStr!)
-    gv.bitmap!.textMatrix = CGAffineTransform(a: 1, b: 0, c: 0, d: -1, tx: 0, ty: 0)
+    getBitmap(handle: handle).textMatrix = CGAffineTransform(a: 1, b: 0, c: 0, d: -1, tx: 0, ty: 0)
     let width = CTLineGetOffsetForStringIndex(line, CFAttributedStringGetLength(attrStr), nil)
     var tx = CGFloat(x)
     var ty = CGFloat(y)
@@ -675,58 +520,58 @@ fileprivate func drawText(handle: VoidPtr, x: Int32, y: Int32, fontType: Int32, 
             break;
     default: break
     }
-    gv.bitmap!.textPosition = CGPoint(x: tx, y: ty)
-    CTLineDraw(line, gv.bitmap!);
+    getBitmap(handle: handle).textPosition = CGPoint(x: tx, y: ty)
+    CTLineDraw(line, getBitmap(handle: handle));
 }
 
 fileprivate func drawRect(handle: VoidPtr, x: Int32, y :Int32, w: Int32, h: Int32, colour: Int32) -> Void {
-    let gv = getGV(handle: handle)
-    let comps = rgba(gv: gv, colour: colour)
-    gv.bitmap!.setFillColor(red: comps[0], green: comps[1], blue: comps[2], alpha: 1)
-    gv.bitmap!.fill(CGRect(x: CGFloat(x), y: CGFloat(y), width: CGFloat(w), height: CGFloat(h)))
+    let gvc = getGVC(handle: handle)
+    let comps = rgba(gvc: gvc, colour: colour)
+    getBitmap(handle: handle).setFillColor(red: comps[0], green: comps[1], blue: comps[2], alpha: 1)
+    getBitmap(handle: handle).fill(CGRect(x: CGFloat(x), y: CGFloat(y), width: CGFloat(w), height: CGFloat(h)))
 }
 
 fileprivate func drawLine(handle: VoidPtr, x: Int32, y: Int32, x2: Int32, y2: Int32, colour: Int32) -> Void {
-    let gv = getGV(handle: handle)
-    let comps = rgba(gv: gv, colour: colour)
-    gv.bitmap!.setStrokeColor(red: comps[0], green: comps[1], blue: comps[2], alpha: 1)
-    gv.bitmap!.beginPath()
-    gv.bitmap!.move(to: CGPoint(x: CGFloat(x), y: CGFloat(y)))
-    gv.bitmap!.addLine(to: CGPoint(x: CGFloat(x2), y: CGFloat(y2)))
-    gv.bitmap!.strokePath()
+    let gvc = getGVC(handle: handle)
+    let comps = rgba(gvc: gvc, colour: colour)
+    getBitmap(handle: handle).setStrokeColor(red: comps[0], green: comps[1], blue: comps[2], alpha: 1)
+    getBitmap(handle: handle).beginPath()
+    getBitmap(handle: handle).move(to: CGPoint(x: CGFloat(x), y: CGFloat(y)))
+    getBitmap(handle: handle).addLine(to: CGPoint(x: CGFloat(x2), y: CGFloat(y2)))
+    getBitmap(handle: handle).strokePath()
 }
 
 fileprivate func drawPolygon(handle: VoidPtr, coords: Int32Ptr, npoints: Int32, fillcolour: Int32, outlinecolour: Int32) -> Void {
-    let gv = getGV(handle: handle)
-    var comps = rgba(gv: gv, colour: outlinecolour)
-    gv.bitmap!.setStrokeColor(red: comps[0], green: comps[1], blue: comps[2], alpha: 1)
-    gv.bitmap!.beginPath()
-    gv.bitmap!.move(to: CGPoint(x: CGFloat(coords![0]), y: CGFloat(coords![1])))
+    let gvc = getGVC(handle: handle)
+    var comps = rgba(gvc: gvc, colour: outlinecolour)
+    getBitmap(handle: handle).setStrokeColor(red: comps[0], green: comps[1], blue: comps[2], alpha: 1)
+    getBitmap(handle: handle).beginPath()
+    getBitmap(handle: handle).move(to: CGPoint(x: CGFloat(coords![0]), y: CGFloat(coords![1])))
     for i in 0..<Int(npoints) {
-        gv.bitmap!.addLine(to: CGPoint(x: CGFloat(coords![2 * i]), y: CGFloat(coords![2 * i + 1])))
+        getBitmap(handle: handle).addLine(to: CGPoint(x: CGFloat(coords![2 * i]), y: CGFloat(coords![2 * i + 1])))
     }
-    gv.bitmap!.closePath()
+    getBitmap(handle: handle).closePath()
     if (fillcolour >=  0) {
-        comps = rgba(gv: gv, colour: fillcolour)
-        gv.bitmap!.setFillColor(red: comps[0], green: comps[1], blue: comps[2], alpha: 1)
+        comps = rgba(gvc: gvc, colour: fillcolour)
+        getBitmap(handle: handle).setFillColor(red: comps[0], green: comps[1], blue: comps[2], alpha: 1)
     }
     let mode = fillcolour >= 0 ? CGPathDrawingMode.fillStroke : CGPathDrawingMode.stroke
-    gv.bitmap!.drawPath(using: mode)
+    getBitmap(handle: handle).drawPath(using: mode)
 }
 
 fileprivate func drawCircle(handle: VoidPtr, cx: Int32, cy: Int32, radius: Int32, fillcolour: Int32, outlinecolour: Int32) -> Void {
-    let gv = getGV(handle: handle)
-    var comps = rgba(gv: gv, colour: outlinecolour)
+    let gvc = getGVC(handle: handle)
+    var comps = rgba(gvc: gvc, colour: outlinecolour)
     let r = CGRect(x: CGFloat(cx-radius+1), y: CGFloat(cy-radius+1), width: CGFloat(radius*2-1), height: CGFloat(radius*2-1))
-    gv.bitmap!.setStrokeColor(red: comps[0], green: comps[1], blue: comps[2], alpha: 1)
-    gv.bitmap!.beginPath()
-    gv.bitmap!.strokePath()
+    getBitmap(handle: handle).setStrokeColor(red: comps[0], green: comps[1], blue: comps[2], alpha: 1)
+    getBitmap(handle: handle).beginPath()
+    getBitmap(handle: handle).strokePath()
     if (fillcolour >=  0) {
-        comps = rgba(gv: gv, colour: fillcolour)
-        gv.bitmap!.setFillColor(red: comps[0], green: comps[1], blue: comps[2], alpha: 1)
-        gv.bitmap!.fillEllipse(in: r)
+        comps = rgba(gvc: gvc, colour: fillcolour)
+        getBitmap(handle: handle).setFillColor(red: comps[0], green: comps[1], blue: comps[2], alpha: 1)
+        getBitmap(handle: handle).fillEllipse(in: r)
     }
-    gv.bitmap!.strokeEllipse(in: r)
+    getBitmap(handle: handle).strokeEllipse(in: r)
 }
 
 fileprivate func drawUpdate(handle: VoidPtr, x: Int32, y: Int32, w: Int32, h: Int32) {
@@ -734,20 +579,20 @@ fileprivate func drawUpdate(handle: VoidPtr, x: Int32, y: Int32, w: Int32, h: In
 }
 
 fileprivate func clip(handle: VoidPtr, x: Int32, y: Int32, w: Int32, h: Int32) -> Void {
-    let gv = getGV(handle: handle)
-    if (!gv.fe.clipping) {
-        gv.bitmap!.saveGState()
+    let gvc = getGVC(handle: handle)
+    if (!gvc.fe.clipping) {
+        getBitmap(handle: handle).saveGState()
     }
-    gv.bitmap!.clip(to: CGRect(x: Int(x), y: Int(y), width: Int(w), height: Int(h)))
-    gv.fe.clipping = true
+    getBitmap(handle: handle).clip(to: CGRect(x: Int(x), y: Int(y), width: Int(w), height: Int(h)))
+    gvc.fe.clipping = true
 }
 
 fileprivate func unclip(handle: VoidPtr) -> Void {
-    let gv = getGV(handle: handle)
-    if (gv.fe.clipping) {
-        gv.bitmap!.restoreGState()
+    let gvc = getGVC(handle: handle)
+    if (gvc.fe.clipping) {
+        getBitmap(handle: handle).restoreGState()
     }
-    gv.fe.clipping = false
+    gvc.fe.clipping = false
 }
 
 fileprivate func startDraw(handle: VoidPtr) -> Void {
@@ -801,20 +646,18 @@ fileprivate func blitterFree(handle: VoidPtr, blitter: OpaquePointer?) -> Void {
 }
 
 fileprivate func blitterSave(handle: VoidPtr, blitter: OpaquePointer?, x: Int32, y: Int32) -> Void {
-    let gv = getGV(handle: handle)
     let b = getBlitter(ptr: blitter!)
     let r = CGRect(x: Int(x), y: Int(y), width: Int(b.w), height: Int(b.h))
-    let r2 = CGRect(x: 0, y: 0, width: gv.bitmap!.width, height: gv.bitmap!.height)
+    let r2 = CGRect(x: 0, y: 0, width: getBitmap(handle: handle).width, height: getBitmap(handle: handle).height)
     let v = r.intersection(r2)
     b.x = x
     b.y = y
     b.ox = Int32(v.origin.x) - x
     b.oy = Int32(v.origin.y) - y
-    b.img = gv.bitmap!.makeImage()!.cropping(to: CGRect(x: v.origin.x, y: CGFloat(gv.bitmap!.height) - v.origin.y - v.height, width: v.width, height: v.height))
+    b.img = getBitmap(handle: handle).makeImage()!.cropping(to: CGRect(x: v.origin.x, y: CGFloat(getBitmap(handle: handle).height) - v.origin.y - v.height, width: v.width, height: v.height))
 }
 
 fileprivate func blitterLoad(handle: VoidPtr, blitter: OpaquePointer?, x: Int32, y: Int32) -> Void {
-    let gv = getGV(handle: handle)
     let bl = getBlitter(ptr: blitter!)
     var x = x
     var y = y
@@ -827,7 +670,7 @@ fileprivate func blitterLoad(handle: VoidPtr, blitter: OpaquePointer?, x: Int32,
     y += bl.oy;
 
     let r = CGRect(x: Int(x), y: Int(y), width: Int(bl.w), height: Int(bl.h))
-    gv.bitmap!.draw(bl.img!, in: r)
+    getBitmap(handle: handle).draw(bl.img!, in: r)
 }
 
 fileprivate func textFallback(handle: VoidPtr, strings: ConstCharPtrConstPtr, nStrings: Int32) -> CharPtr {

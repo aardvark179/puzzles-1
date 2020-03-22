@@ -10,12 +10,13 @@ import Foundation
 import UIKit
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, UINavigationControllerDelegate {
     var window: UIWindow?
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         window = UIWindow(frame: UIScreen.main.bounds)
         let glvc = GameListViewController(frame: window!.bounds)
         let nc = UINavigationController(rootViewController: glvc)
+        nc.delegate = self
         let gvc = glvc.saveGameViewController()
         if (gvc != nil) {
             nc.setViewControllers([glvc, gvc!], animated: false)
@@ -23,5 +24,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window?.rootViewController = nc
         window?.makeKeyAndVisible()
         return true
+    }
+    
+    func navigationController(_ navigationController: UINavigationController, willShow viewController: UIViewController, animated: Bool) {
+        if (viewController is GameViewController) {
+            navigationController.isToolbarHidden = false
+        } else {
+            navigationController.isToolbarHidden = true
+        }
     }
 }

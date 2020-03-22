@@ -4,12 +4,12 @@ import UIKit
 class GameTypeController : UITableViewController, GameSettingsDelegate {
     let theGame: UnsafePointer<game>
     var midend: OpaquePointer
-    var gameView: GameView
+    var controller: GameViewController
     
-    init(game: UnsafePointer<game>, midend: OpaquePointer, gameView: GameView) {
+    init(game: UnsafePointer<game>, midend: OpaquePointer, controller: GameViewController) {
         self.theGame = game
         self.midend = midend
-        self.gameView = gameView
+        self.controller = controller
         super.init(style: .grouped)
         self.title = title
     }
@@ -63,8 +63,8 @@ class GameTypeController : UITableViewController, GameSettingsDelegate {
         if (indexPath.row < Int(pm!.pointee.n_entries)) {
             let params = pm!.pointee.entries[indexPath.row].params
             midend_set_params(midend, params)
-            gameView.startNewGame()
-            navigationController?.popToViewController(gameView.next as! UIViewController, animated: true)
+            controller.startNewGame()
+            navigationController?.popToViewController(controller.view.next as! UIViewController, animated: true)
         } else {
             var title: UnsafeMutablePointer<Int8>? = nil
             let config = midend_get_config(midend, Int32(CFG_SETTINGS), &title)
@@ -79,8 +79,8 @@ class GameTypeController : UITableViewController, GameSettingsDelegate {
             alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
             present(alert, animated: false, completion: nil)
         } else {
-            gameView.startNewGame()
-            navigationController?.popToViewController(gameView.next as! UIViewController, animated: true)
+            controller.startNewGame()
+            navigationController?.popToViewController(controller.view.next as! UIViewController, animated: true)
         }
     }
 }
