@@ -17,6 +17,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UINavigationControllerDel
         let glvc = GameListViewController(frame: window!.bounds)
         let nc = UINavigationController(rootViewController: glvc)
         nc.delegate = self
+        nc.hidesBarsWhenVerticallyCompact = true
         let gvc = glvc.saveGameViewController()
         if (gvc != nil) {
             nc.setViewControllers([glvc, gvc!], animated: false)
@@ -28,9 +29,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UINavigationControllerDel
     
     func navigationController(_ navigationController: UINavigationController, willShow viewController: UIViewController, animated: Bool) {
         if (viewController is GameViewController) {
-            navigationController.isToolbarHidden = false
+            navigationController.setToolbarHidden(false, animated: false)
         } else {
-            navigationController.isToolbarHidden = true
+            navigationController.setToolbarHidden(true, animated: false)
         }
     }
 }
