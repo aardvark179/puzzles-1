@@ -64,28 +64,6 @@ class GameView : UIView {
         return (theGame == net_ptr) && buttons["Shift"]?.style == .done
     }
     
-    func createProgressIndicator(overlay: UIView) -> (UIView, UIActivityIndicatorView) {
-        let box = UIView(frame: CGRect(x: (overlay.bounds.width - 200) / 2, y: (overlay.bounds.height - 50) / 2, width: 200, height: 50))
-        box.backgroundColor = UIColor.black
-        box.isHidden = true
-        overlay.addSubview(box)
-        
-        let aiv = UIActivityIndicatorView(style: .whiteLarge)
-        let inset = (box.bounds.height - aiv.bounds.height) / 2
-        aiv.frame = CGRect(x: inset, y: inset, width: aiv.bounds.width, height: aiv.bounds.height)
-        box.addSubview(aiv)
-        
-        let label = UILabel(frame: CGRect(x: inset * 2 + aiv.bounds.width, y: (box.bounds.height - 20 ) / 2, width: box.frame.width - inset * 2 - aiv.bounds.width, height: 20))
-        label.backgroundColor = UIColor.black
-        label.textColor = UIColor.white
-        label.text = "Generating puzzle"
-        box.addSubview(label)
-        
-        aiv.startAnimating()
-        
-        return (box, aiv)
-    }
-    
     fileprivate func buildStatusBar(topMargin: CGFloat, usableHeight: inout CGFloat) {
         if (midend_wants_statusbar(midend)) {
             usableHeight -= 20
@@ -364,18 +342,7 @@ class GameView : UIView {
         let r = CGRect(x: rect.origin.x/contentScaleFactor, y: rect.origin.y/contentScaleFactor, width: rect.width/contentScaleFactor, height: rect.height/contentScaleFactor).offsetBy(dx: gameRect.origin.x, dy: gameRect.origin.y)
         setNeedsDisplay(r)
     }
-    
-    func saveGame(inProgress: inout Bool) -> String? {
-        if (midend == nil) {
-            return nil
-        }
         
-        inProgress = midend_can_undo(midend) && midend_status(midend) == 0
-        let save = NSMutableString()
-        midend_serialise(midend, {ctx, buffer, length in saveGameWrite(ctx: ctx, buffer: buffer, length: length)}, bridge(obj: save))
-        return String(save)
-    }
-    
     override func layoutSubviews() {
         if (self.midend == nil) {
             return
@@ -405,21 +372,6 @@ class GameView : UIView {
         bitmap = CGContext(data: nil, width: Int(w), height: Int(h), bitsPerComponent: 8, bytesPerRow: Int(w)*4, space: cs, bitmapInfo: CGImageAlphaInfo.noneSkipLast.rawValue)
         midend_force_redraw(midend)
         setNeedsDisplay()
-    }
-}
-
-fileprivate func saveGameWrite(ctx: VoidPtr, buffer: ConstVoidPtr, length: Int32) -> Void {
-    let str: NSMutableString = bridge(ptr: ctx!)
-    str.append(String.init(bytesNoCopy: UnsafeMutableRawPointer(mutating: buffer!), length: Int(length), encoding: .utf8, freeWhenDone: false)!)
-}
-
-class StringReadConext {
-    let data: [UInt8]
-    var position: Int
-    
-    init(save: String, position: Int) {
-        self.position = position
-        data = Array(save.data(using: .utf8)!)
     }
 }
 

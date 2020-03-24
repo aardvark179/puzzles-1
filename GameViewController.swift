@@ -86,7 +86,7 @@ class GameViewController : UIViewController, GameSettingsDelegate {
         let overlay: UIView = UIView.init(frame: window.rootViewController!.view.bounds)
         window.rootViewController!.view.addSubview(overlay)
         
-        let (box, aiv) = gameView!.createProgressIndicator(overlay: overlay)
+        let (box, aiv) = createProgressIndicator(overlay: overlay)
         
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + .milliseconds(250)) {
             box.isHidden = false
@@ -101,6 +101,28 @@ class GameViewController : UIViewController, GameSettingsDelegate {
                 self.gameView!.layoutSubviews()
             }
         }
+    }
+
+    func createProgressIndicator(overlay: UIView) -> (UIView, UIActivityIndicatorView) {
+        let box = UIView(frame: CGRect(x: (overlay.bounds.width - 200) / 2, y: (overlay.bounds.height - 50) / 2, width: 200, height: 50))
+        box.backgroundColor = UIColor.black
+        box.isHidden = true
+        overlay.addSubview(box)
+        
+        let aiv = UIActivityIndicatorView(style: .whiteLarge)
+        let inset = (box.bounds.height - aiv.bounds.height) / 2
+        aiv.frame = CGRect(x: inset, y: inset, width: aiv.bounds.width, height: aiv.bounds.height)
+        box.addSubview(aiv)
+        
+        let label = UILabel(frame: CGRect(x: inset * 2 + aiv.bounds.width, y: (box.bounds.height - 20 ) / 2, width: box.frame.width - inset * 2 - aiv.bounds.width, height: 20))
+        label.backgroundColor = UIColor.black
+        label.textColor = UIColor.white
+        label.text = "Generating puzzle"
+        box.addSubview(label)
+        
+        aiv.startAnimating()
+        
+        return (box, aiv)
     }
 
     func didApply(config: UnsafeMutablePointer<config_item>) {
@@ -222,16 +244,42 @@ class GameViewController : UIViewController, GameSettingsDelegate {
     
     @objc func saveGame() {
         var inProgess: Bool = false
-        let saved: String? = gameView?.saveGame(inProgress: &inProgess)
+        let saved: String? = saveGameInt(inProgress: &inProgess)
         if (saved != nil) {
             saver.saveGame(name: name, state: saved!, inProgress: inProgess)
         }
     }
     
+    func saveGameInt(inProgress: inout Bool) -> String? {
+        if (midend == nil) {
+            return nil
+        }
+        
+        inProgress = midend_can_undo(midend) && midend_status(midend) == 0
+        let save = NSMutableString()
+        midend_serialise(midend, {ctx, buffer, length in saveGameWrite(ctx: ctx, buffer: buffer, length: length)}, bridge(obj: save))
+        return String(save)
+    }
+
     @objc func showHelp() {
         navigationController?.pushViewController(GameHelpController(file: String.init(format: "%s.html", theGame.pointee.htmlhelp_topic)), animated: true)
     }
     
+}
+
+class StringReadConext {
+    let data: [UInt8]
+    var position: Int
+    
+    init(save: String, position: Int) {
+        self.position = position
+        data = Array(save.data(using: .utf8)!)
+    }
+}
+
+fileprivate func saveGameWrite(ctx: VoidPtr, buffer: ConstVoidPtr, length: Int32) -> Void {
+    let str: NSMutableString = bridge(ptr: ctx!)
+    str.append(String.init(bytesNoCopy: UnsafeMutableRawPointer(mutating: buffer!), length: Int(length), encoding: .utf8, freeWhenDone: false)!)
 }
 
 fileprivate func saveGameRead(ctx: VoidPtr, buffer: VoidPtr, length: Int32) -> Bool {
