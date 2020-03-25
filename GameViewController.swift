@@ -58,6 +58,7 @@ class GameViewController : UIViewController, GameSettingsDelegate {
     }
     
     deinit {
+        self.gameView?.deactivateTimer()
         NotificationCenter.default.removeObserver(self)
         if (midend != nil) {
             midend_free(midend);
