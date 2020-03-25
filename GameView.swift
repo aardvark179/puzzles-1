@@ -26,7 +26,7 @@ func bridge<T : AnyObject>(ptr : UnsafeMutableRawPointer) -> T {
     return Unmanaged<T>.fromOpaque(ptr).takeUnretainedValue()
 }
 
-class GameView : UIView {
+class GameView : UIView, UIGestureRecognizerDelegate {
     var theGame: UnsafePointer<game>
     var midend: OpaquePointer!
     var usableFrame: CGRect!
@@ -39,17 +39,26 @@ class GameView : UIView {
     var touchXPixels: Int32 = 0
     var touchYPixels: Int32 = 0
     var touchButton: Int = 0
-    var touchTimer: Timer? = nil
     var toolbar: UIToolbar?
     var buttons: Dictionary<String, UIBarButtonItem> = Dictionary<String, UIBarButtonItem>()
     var statusbar: UILabel?
     var bitmap: CGContext?
     var blitters: Set<Blitter> = Set()
+    var tapRecogniser: UITapGestureRecognizer!
+    var longPressRecogniser: UILongPressGestureRecognizer!
  
     init(game: UnsafePointer<game>, saved:String?, inProgess:Bool, frame:CGRect) {
         self.midend = nil
         theGame = game
         super.init(frame: frame)
+        tapRecogniser = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
+        tapRecogniser.delaysTouchesBegan = true
+        tapRecogniser.delegate = self
+        longPressRecogniser = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress(_:)))
+        longPressRecogniser.delaysTouchesBegan = true
+        longPressRecogniser.minimumPressDuration = 0.5
+        addGestureRecognizer(tapRecogniser)
+        addGestureRecognizer(longPressRecogniser)
     }
     
     required init?(coder: NSCoder) {
@@ -192,11 +201,8 @@ class GameView : UIView {
         }
     }
     
-    fileprivate func transformTouch(touches: Set<UITouch>, inRect: Bool) -> (Int32, Int32, Int32, Int32) {
-        let touch = touches.first
-        var p = touch!.location(in: self)
-        p.x -= gameRect.origin.x
-        p.y -= gameRect.origin.y
+    fileprivate func transformTouchPoint(_ point: CGPoint, _ inRect: Bool) -> (Int32, Int32, Int32, Int32) {
+        let p = CGPoint(x: point.x - gameRect.origin.x, y: point.y - gameRect.origin.y)
         let pointX: Int32
         let pointY: Int32
         if (inRect) {
@@ -211,10 +217,49 @@ class GameView : UIView {
         return (pointX, pointY, pixelX, pixelY)
     }
     
+    fileprivate func transformTouch(touches: Set<UITouch>, inRect: Bool) -> (Int32, Int32, Int32, Int32) {
+        let touch = touches.first
+        let p = touch!.location(in: self)
+        return transformTouchPoint(p, inRect)
+    }
+    
+    @objc func handleTap(_ sender: UITapGestureRecognizer) {
+        if (sender.state == .ended) {
+            (touchXPoints, touchYPoints, touchXPixels, touchYPixels) = transformTouchPoint(sender.location(in: self), false)
+            if (netCentreMode()) {
+                midend_process_key(midend, touchXPixels, touchYPixels, 0x03)
+            } else {
+                midend_process_key(midend, touchXPixels, touchYPixels, ButtonDown[0])
+                midend_process_key(midend, touchXPixels, touchYPixels, ButtonUp[0])
+            }
+        }
+    }
+    
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRequireFailureOf otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        if (gestureRecognizer == tapRecogniser && otherGestureRecognizer == longPressRecogniser) {
+            return true
+        } else {
+            return false
+        }
+    }
+    
+    @objc func handleLongPress(_ sender: UILongPressGestureRecognizer) {
+        if (sender.state == .ended) {
+            (touchXPoints, touchYPoints, touchXPixels, touchYPixels) = transformTouchPoint(sender.location(in: self), false)
+            if (netShiftMode()) {
+                return
+            } else if (netCentreMode()) {
+                midend_process_key(midend, touchXPixels, touchYPixels, 0x03)
+            } else {
+                let button = theGame == net_ptr ? 2 : 1
+                midend_process_key(midend, touchXPixels, touchYPixels, ButtonDown[button])
+                midend_process_key(midend, touchXPixels, touchYPixels, ButtonUp[button])
+            }
+        }
+    }
+    
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         (touchXPoints, touchYPoints, touchXPixels, touchYPixels) = transformTouch(touches: touches, inRect: false)
-        touchTimer = Timer(timeInterval: TimeInterval(0.5), target: self, selector: #selector(handleTouchTimer), userInfo: nil, repeats: false)
-        RunLoop.current.add(touchTimer!, forMode: RunLoop.Mode.default)
         touchState = 1
         touchButton = 0
         if (netCentreMode()) {
@@ -247,8 +292,6 @@ class GameView : UIView {
         } else {
             if (touchState == 1) {
                 if (abs(xPoints + touchXPoints) >= 10 || abs(yPoints + touchYPoints) >= 10) {
-                    touchTimer?.invalidate()
-                    touchTimer = nil
                     midend_process_key(midend, touchXPixels, touchYPixels, ButtonDown[touchButton]);
                     touchState = 2;
                 }
@@ -271,29 +314,10 @@ class GameView : UIView {
             midend_process_key(midend, xPixels, yPixels, ButtonUp[touchButton])
         }
         touchState = 0
-        touchTimer?.invalidate()
-        touchTimer = nil
     }
     
     override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
         touchState = 0
-        touchTimer?.invalidate()
-        touchTimer = nil
-    }
-    
-    @objc func handleTouchTimer(timer: Timer) {
-        if (netCentreMode() || netShiftMode()) {
-            return
-        } else {
-            if (theGame == net_ptr) {
-                touchButton = 2
-            } else {
-                touchButton = 1
-            }
-            midend_process_key(midend, touchXPixels, touchYPixels, ButtonDown[touchButton])
-            touchState = 2
-            UIDevice.current.playInputClick()
-        }
     }
     
     @objc func keyButton(sender: UIBarButtonItem) {
