@@ -109,6 +109,7 @@ class GameViewController : UIViewController, GameSettingsDelegate {
                 overlay.removeFromSuperview()
                 self.midend = m
                 self.gameView!.layoutSubviews()
+                self.gameView!.populateGameBar()
             }
         }
     }

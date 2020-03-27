@@ -56,7 +56,6 @@ class GameView : UIView, UIGestureRecognizerDelegate {
         tapRecogniser.delegate = self
         longPressRecogniser = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress(_:)))
         longPressRecogniser.delaysTouchesBegan = true
-        longPressRecogniser.minimumPressDuration = 0.5
         addGestureRecognizer(tapRecogniser)
         addGestureRecognizer(longPressRecogniser)
     }
@@ -73,33 +72,40 @@ class GameView : UIView, UIGestureRecognizerDelegate {
         return (theGame == net_ptr) && buttons["Shift"]?.style == .done
     }
     
-    fileprivate func buildStatusBar(topMargin: CGFloat, usableHeight: inout CGFloat) {
+    fileprivate func buildStatusBar() {
         if (midend_wants_statusbar(midend)) {
-            usableHeight -= 20
-            let r = CGRect(x: 0, y: topMargin + usableHeight, width: self.frame.width, height: 20)
-            if (self.statusbar != nil) {
-                self.statusbar!.frame = r
-            } else {
-                self.statusbar = UILabel(frame: r)
+            if (statusbar == nil) {
+                statusbar = UILabel()
                 self.addSubview(self.statusbar!)
+                let constraints: [NSLayoutConstraint]
+                if #available(iOS 11.0, *) {
+                    constraints = [
+                        statusbar!.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor)
+                    ]
+                } else {
+                    constraints = [statusbar!.bottomAnchor.constraint(equalTo: bottomAnchor),
+                                   statusbar!.widthAnchor.constraint(equalTo: self.widthAnchor)]
+                }
+                statusbar!.translatesAutoresizingMaskIntoConstraints = false
+                statusbar!.sizeToFit()
+                NSLayoutConstraint.activate(constraints)
             }
         } else {
-            self.statusbar?.removeFromSuperview()
-            self.statusbar = nil
+            statusbar?.removeFromSuperview()
+            statusbar = nil
         }
     }
     
-    fileprivate func buildGameButtons(toolbarHeight: CGFloat, topMargin: CGFloat, usableHeight: inout CGFloat) {
+    func populateGameBar() {
         buttons.removeAll()
         if (theGame == filling_ptr
-         || theGame == keen_ptr
-         || theGame == map_ptr
-         || theGame == net_ptr
-         || theGame == solo_ptr
-         || theGame == towers_ptr
-         || theGame == undead_ptr
-         || theGame == unequal_ptr) {
-            usableHeight -= toolbarHeight;
+             || theGame == keen_ptr
+             || theGame == map_ptr
+             || theGame == net_ptr
+             || theGame == solo_ptr
+             || theGame == towers_ptr
+             || theGame == undead_ptr
+             || theGame == unequal_ptr) {
             var main_button_count = 9;
             var extra_button_count = 0;
             var labels: [String]? = nil;
@@ -131,9 +137,9 @@ class GameView : UIView, UIGestureRecognizerDelegate {
                 let scanner: Scanner = Scanner(string: game_id)
                 var x: Int = 0
                 var y: Int = 0
-                let gotX = scanner.scanInt(UnsafeMutablePointer<Int>(&x))
+                let gotX = scanner.scanInt(&x)
                 _ = scanner.scanUpTo("x", into: nil)
-                let gotY = scanner.scanInt(UnsafeMutablePointer<Int>(&y))
+                let gotY = scanner.scanInt(&y)
                 
                 if (gotX && gotY) {
                     main_button_count = x * y;
@@ -153,12 +159,7 @@ class GameView : UIView, UIGestureRecognizerDelegate {
                 extra_labels = unequalLabels;
                 extra_button_count = 2;
             }
-            let r = CGRect(x: 0, y: topMargin + usableHeight, width: self.frame.width, height: toolbarHeight)
-            if (gameToolbar == nil) {
-                gameToolbar = UIToolbar(frame: r)
-            } else {
-                gameToolbar?.frame = r
-            }
+
             var items: Array<UIBarButtonItem> = Array()
             items.append(UIBarButtonItem(barButtonSystemItem: UIBarButtonItem.SystemItem.flexibleSpace, target: nil, action: nil))
             items.append(UIBarButtonItem(barButtonSystemItem: UIBarButtonItem.SystemItem.flexibleSpace, target: nil, action: nil))
@@ -181,8 +182,46 @@ class GameView : UIView, UIGestureRecognizerDelegate {
                 items.append(UIBarButtonItem(barButtonSystemItem: UIBarButtonItem.SystemItem.flexibleSpace, target: nil, action: nil))
             }
             items.append(UIBarButtonItem(barButtonSystemItem: UIBarButtonItem.SystemItem.flexibleSpace, target: nil, action: nil))
-            gameToolbar!.items = items
-            addSubview(gameToolbar!)
+            gameToolbar!.setItems(items, animated: false)
+        }
+    }
+    
+    fileprivate func buildGameButtons() {
+        if (theGame == filling_ptr
+             || theGame == keen_ptr
+             || theGame == map_ptr
+             || theGame == net_ptr
+             || theGame == solo_ptr
+             || theGame == towers_ptr
+             || theGame == undead_ptr
+             || theGame == unequal_ptr) {
+            if (gameToolbar == nil) {
+                gameToolbar = UIToolbar()
+                addSubview(gameToolbar!)
+                let constraints: [NSLayoutConstraint]
+                if (statusbar != nil) {
+                    constraints = [
+                        gameToolbar!.bottomAnchor.constraint(equalTo: statusbar!.topAnchor),
+                        gameToolbar!.widthAnchor.constraint(equalTo: widthAnchor)
+                    ]
+                } else {
+                    if #available(iOS 11.0, *) {
+                        constraints = [
+                            gameToolbar!.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor),
+                            gameToolbar!.widthAnchor.constraint(equalTo: widthAnchor)
+                        ]
+                    } else {
+                        constraints = [
+                            gameToolbar!.bottomAnchor.constraint(equalTo: bottomAnchor),
+                            gameToolbar!.widthAnchor.constraint(equalTo: widthAnchor)
+                        ]
+                    }
+                }
+                gameToolbar!.translatesAutoresizingMaskIntoConstraints = false
+                gameToolbar!.sizeToFit()
+                NSLayoutConstraint.activate(constraints)
+                populateGameBar()
+            }
         } else {
             gameToolbar?.removeFromSuperview()
             gameToolbar = nil
@@ -368,24 +407,38 @@ class GameView : UIView, UIGestureRecognizerDelegate {
     }
         
     override func layoutSubviews() {
+        super.layoutSubviews()
         if (self.midend == nil) {
             return
         }
-        let toolbarHeight: CGFloat = 0
-        var topMargin: CGFloat = 0
+        
+        buildStatusBar()
+        buildGameButtons()
+        
+        let topMargin: CGFloat
         if #available(iOS 11.0, *) {
-            topMargin += safeAreaInsets.top
-        }
-        var usableHeight = self.frame.height - topMargin
-        if #available(iOS 11.0, *) {
-            usableHeight = usableHeight - safeAreaInsets.bottom
+            topMargin = frame.minY + safeAreaInsets.top
+        } else {
+            topMargin = frame.minY
         }
         
-        buildStatusBar(topMargin: topMargin, usableHeight: &usableHeight)
-        buildGameButtons(toolbarHeight: toolbarHeight, topMargin: topMargin, usableHeight: &usableHeight)
-        usableFrame = CGRect(x: 0, y: topMargin, width: self.frame.width, height: usableHeight)
+        var bottomMargin: CGFloat = 0
+        if (gameToolbar != nil) {
+            bottomMargin += gameToolbar!.bounds.height
+        }
+        if (statusbar != nil) {
+            bottomMargin += statusbar!.bounds.height
+        }
+        
+        if #available(iOS 11.0, *) {
+            bottomMargin += safeAreaInsets.bottom
+        } else {
+            bottomMargin += 50
+        }
+        
+        usableFrame = CGRect(x: 0, y: topMargin, width: self.frame.width, height: frame.height - topMargin - bottomMargin)
         let fw = Int32(frame.width * contentScaleFactor)
-        let fh = Int32(usableHeight * contentScaleFactor)
+        let fh = Int32(usableFrame.height * contentScaleFactor)
         var w = fw
         var h = fh
         midend_size(midend, &w, &h, false)
