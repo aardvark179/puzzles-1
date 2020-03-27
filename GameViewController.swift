@@ -20,7 +20,16 @@ class GameViewController : UIViewController, GameSettingsDelegate {
             self.gameView?.midend = midend
         }
     }
-    var fe: frontend = frontend(gv: nil, colours: nil, ncolours: 0, clipping: false, activate_timer: {fe in attach_timer(fe: fe!)}, deactivate_timer: {fe in detach_timer(fe: fe!)}, default_colour: {fe, output in frontendDefaultColour(fe: fe, output: output)})
+    var fe: frontend = frontend(
+        gv: nil,
+        colours: nil,
+        ncolours: 0,
+        clipping: false,
+        activate_timer: {fe in attach_timer(fe: fe!)},
+        deactivate_timer: {fe in detach_timer(fe: fe!)},
+        default_colour: {fe, output in frontendDefaultColour(fe: fe, output: output)},
+        default_colour_for: {fe, output, lc in frontendDefaultColourFor(fe: fe, output: output, logicalColour: Int(lc))}
+        )
     var name: String = ""
     var saved: String?
     var initInProgress: Bool = false

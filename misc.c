@@ -224,6 +224,10 @@ void game_mkhighlight_specific(frontend *fe, float *ret,
     }
 }
 
+void game_mkcolour(frontend *fe, float *ret, int logical_colour) {
+    frontend_default_colour_for(fe, ret, logical_colour);
+}
+
 void game_mkhighlight(frontend *fe, float *ret,
                       int background, int highlight, int lowlight)
 {

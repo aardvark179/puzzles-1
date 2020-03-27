@@ -94,6 +94,7 @@ enum {
     COL_BLACK, COL_WHITE,
     COL_ERROR, COL_GRID, COL_FLASH,
     COL_DRAGON, COL_DRAGOFF,
+    COL_FOREGROUND, COL_LINE,
     NCOLOURS
 };
 
@@ -2290,7 +2291,7 @@ static float *game_colours(frontend *fe, int *ncolours)
         ret[COL_WHITE * 3 + i] = 1.0F;
         ret[COL_GRID * 3 + i] = 0.4F;
     }
-
+    
     ret[COL_ERROR * 3 + 0] = 1.0F;
     ret[COL_ERROR * 3 + 1] = 0.0F;
     ret[COL_ERROR * 3 + 2] = 0.0F;
@@ -2306,6 +2307,12 @@ static float *game_colours(frontend *fe, int *ncolours)
     ret[COL_FLASH * 3 + 0] = 1.0F;
     ret[COL_FLASH * 3 + 1] = 1.0F;
     ret[COL_FLASH * 3 + 2] = 1.0F;
+
+    game_mkcolour(fe, &ret[COL_FOREGROUND * 3], LOGICAL_FOREGROUND);
+    game_mkcolour(fe, &ret[COL_LINE * 3], LOGICAL_PEARL_LINE);
+    game_mkcolour(fe, &ret[COL_DRAGON * 3], LOGICAL_PEARL_DRAGON);
+    game_mkcolour(fe, &ret[COL_DRAGOFF * 3], LOGICAL_PEARL_DRAGOFF);
+    game_mkcolour(fe, &ret[COL_ERROR * 3], LOGICAL_PEARL_ERROR);
 
     *ncolours = NCOLOURS;
 
@@ -2414,8 +2421,8 @@ static void draw_square(drawing *dr, game_drawstate *ds, const game_ui *ui,
             /* either a no-line mark ... */
             int mx = cx + xoff, my = cy + yoff, msz = t16;
 
-            draw_line(dr, mx-msz, my-msz, mx+msz, my+msz, COL_BLACK);
-            draw_line(dr, mx-msz, my+msz, mx+msz, my-msz, COL_BLACK);
+            draw_line(dr, mx-msz, my-msz, mx+msz, my+msz, COL_FOREGROUND);
+            draw_line(dr, mx-msz, my+msz, mx+msz, my-msz, COL_FOREGROUND);
         } else {
             if (get_gui_style() == GUI_LOOPY) {
                 /* draw grid lines connecting centre of cells */
@@ -2428,7 +2435,7 @@ static void draw_square(drawing *dr, game_drawstate *ds, const game_ui *ui,
      * Order is important here, specifically for the eventual colours of the
      * exposed end caps. */
     draw_lines_specific(dr, ds, x, y, lflags, 0,
-                        (lflags & DS_FLASH ? COL_FLASH : COL_BLACK));
+                        (lflags & DS_FLASH ? COL_FLASH : COL_LINE));
     draw_lines_specific(dr, ds, x, y, lflags, DS_ESHIFT, COL_ERROR);
     draw_lines_specific(dr, ds, x, y, lflags, DS_DSHIFT, COL_DRAGOFF);
     draw_lines_specific(dr, ds, x, y, lflags, DS_DSHIFT, COL_DRAGON);
@@ -2441,7 +2448,7 @@ static void draw_square(drawing *dr, game_drawstate *ds, const game_ui *ui,
         if (lflags & DS_ERROR_CLUE) /* draw a bigger 'error' clue circle. */
             draw_circle(dr, cx, cy, TILE_SIZE*3/8, COL_ERROR, COL_ERROR);
 
-        draw_circle(dr, cx, cy, TILE_SIZE/4, c, COL_BLACK);
+        draw_circle(dr, cx, cy, TILE_SIZE/4, c, COL_FOREGROUND);
     }
 
     unclip(dr);

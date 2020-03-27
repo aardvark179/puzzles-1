@@ -18,6 +18,7 @@ struct frontend {
     void (*activate_timer)(frontend *);
     void (*deactivate_timer)(frontend *);
     void (*default_colour)(frontend *, float *);
+    bool (*default_colour_for)(frontend *, float *, int);
 };
 
 // Game instances we will want to refer to

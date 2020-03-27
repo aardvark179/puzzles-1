@@ -59,6 +59,21 @@ enum {
     MOD_MASK       = 0x7000 /* mask for all modifiers */
 };
 
+/* Logical colour definitions. */
+enum {
+    LOGICAL_BACKGROUND,
+    LOGICAL_FOREGROUND,
+    LOGICAL_BLACK,
+    LOGICAL_WHITE,
+    LOGICAL_GRID,
+    LOGICAL_HIGHLIGHT,
+    LOGICAL_LOWLIGHT,
+    LOGICAL_PEARL_LINE,
+    LOGICAL_PEARL_ERROR,
+    LOGICAL_PEARL_DRAGON,
+    LOGICAL_PEARL_DRAGOFF,
+};
+
 #define IS_MOUSE_DOWN(m) ( (unsigned)((m) - LEFT_BUTTON) <= \
                                (unsigned)(RIGHT_BUTTON - LEFT_BUTTON))
 #define IS_MOUSE_DRAG(m) ( (unsigned)((m) - LEFT_DRAG) <= \
@@ -243,6 +258,8 @@ void debug_printf(const char *fmt, ...);
 
 void fatal(const char *fmt, ...);
 void frontend_default_colour(frontend *fe, float *output);
+bool frontend_default_colour_for(frontend *fe, float* output, int logical_colour);
+
 void deactivate_timer(frontend *fe);
 void activate_timer(frontend *fe);
 void get_random_seed(void **randseed, int *randseedsize);
@@ -377,6 +394,9 @@ char *fgetline(FILE *fp);
  * May assert (or just go wrong) if lengths are unchecked. */
 char *bin2hex(const unsigned char *in, int inlen);
 unsigned char *hex2bin(const char *in, int outlen);
+
+/* Set the ret to the colour provided by the frontend for the specified logical colour. This may vary depending on interface choices */
+void game_mkcolour(frontend * fe, float *ret, int logical_colour);
 
 /* Sets (and possibly dims) background from frontend default colour,
  * and auto-generates highlight and lowlight colours too. */

@@ -448,7 +448,7 @@ fileprivate func getGVC(handle: VoidPtr) -> GameViewController {
     return bridge(ptr: UnsafeMutableRawPointer(OpaquePointer(handle))!)
 }
 
-fileprivate func getGV(handle: VoidPtr) -> GameView {
+func getGV(handle: VoidPtr) -> GameView {
     return getGVC(handle: handle).gameView!
 }
 

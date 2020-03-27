@@ -12,8 +12,8 @@ void fatal(const char *fmt, ...)
 {
 }
 
-bool frontend_default_colour_for(frontend *fe, int colour, float* output) {
-    return false;
+bool frontend_default_colour_for(frontend *fe, float* output, int logical_colour) {
+    return fe->default_colour_for(fe, output, logical_colour);
 }
 
 void get_random_seed(void **randseed, int *randseedsize)
