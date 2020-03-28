@@ -3034,44 +3034,14 @@ static float *game_colours(frontend *fe, int *ncolours)
      * lowlight colours it generates.
      */
     game_mkhighlight(fe, ret, COL_BACKGROUND, COL_WHITEBG, COL_BLACKBG);
-
-    for (i = 0; i < 3; i++) {
-        /*
-         * Currently, white dots and white-background squares are
-         * both pure white.
-         */
-        ret[COL_WHITEDOT * 3 + i] = 1.0F;
-        ret[COL_WHITEBG * 3 + i] = 1.0F;
-
-        /*
-         * But black-background squares are a dark grey, whereas
-         * black dots are really black.
-         */
-        ret[COL_BLACKDOT * 3 + i] = 0.0F;
-        ret[COL_BLACKBG * 3 + i] = ret[COL_BACKGROUND * 3 + i] * 0.3F;
-
-        /*
-         * In unfilled squares, we draw a faint gridwork.
-         */
-        ret[COL_GRID * 3 + i] = ret[COL_BACKGROUND * 3 + i] * 0.8F;
-
-        /*
-         * Edges and arrows are filled in in pure black.
-         */
-        ret[COL_EDGE * 3 + i] = 0.0F;
-        ret[COL_ARROW * 3 + i] = 0.0F;
-    }
-
-#ifdef EDITOR
-    /* tinge the edit background to bluey */
-    ret[COL_BACKGROUND * 3 + 0] = ret[COL_BACKGROUND * 3 + 0] * 0.8F;
-    ret[COL_BACKGROUND * 3 + 1] = ret[COL_BACKGROUND * 3 + 0] * 0.8F;
-    ret[COL_BACKGROUND * 3 + 2] = min(ret[COL_BACKGROUND * 3 + 0] * 1.4F, 1.0F);
-#endif
-
-    ret[COL_CURSOR * 3 + 0] = min(ret[COL_BACKGROUND * 3 + 0] * 1.4F, 1.0F);
-    ret[COL_CURSOR * 3 + 1] = ret[COL_BACKGROUND * 3 + 0] * 0.8F;
-    ret[COL_CURSOR * 3 + 2] = ret[COL_BACKGROUND * 3 + 0] * 0.8F;
+    game_mkcolour(fe, &ret[COL_BLACKBG * 3], LOGICAL_GALAXIES_BLACKBG);
+    game_mkcolour(fe, &ret[COL_WHITEBG * 3], LOGICAL_GALAXIES_WHITEBG);
+    game_mkcolour(fe, &ret[COL_BLACKDOT * 3], LOGICAL_GALAXIES_BLACKDOT);
+    game_mkcolour(fe, &ret[COL_WHITEDOT * 3], LOGICAL_GALAXIES_WHITEDOT);
+    game_mkcolour(fe, &ret[COL_GRID * 3], LOGICAL_GRID);
+    game_mkcolour(fe, &ret[COL_EDGE * 3], LOGICAL_GALAXIES_EDGE);
+    game_mkcolour(fe, &ret[COL_ARROW * 3], LOGICAL_GALAXIES_ARROW);
+    game_mkcolour(fe, &ret[COL_CURSOR * 3], LOGICAL_GALAXIES_CURSOR);
 
     *ncolours = NCOLOURS;
     return ret;

@@ -71,6 +71,7 @@ func frontendDefaultColourFor(fe: UnsafeMutablePointer<frontend>?, output: Unsaf
             colour = UIColor.black
         }
     case LOGICAL_PEARL_LINE,
+         LOGICAL_GALAXIES_EDGE,
          LOGICAL_NET_WIRE:
         if #available(iOS 13.0, *) {
             if (dark) {
@@ -109,14 +110,37 @@ func frontendDefaultColourFor(fe: UnsafeMutablePointer<frontend>?, output: Unsaf
         }
     case LOGICAL_LIGHTUP_MARK:
         colour = UIColor.black
-    case LOGICAL_LIGHTUP_CURSER:
-        colour = UIColor.gray
+    case LOGICAL_LIGHTUP_CURSER,
+         LOGICAL_GALAXIES_CURSOR:
+        if (dark) {
+            colour = UIColor(white: 0.4, alpha: 1)
+        } else {
+            colour = UIColor(white: 0.6, alpha: 1)
+        }
     case LOGICAL_NET_LOCKED:
         colour = UIColor.darkGray
     case LOGICAL_NET_ENDPOINT:
         colour = UIColor.blue
     case LOGICAL_NET_POWERED:
         colour = UIColor.cyan
+    case LOGICAL_GALAXIES_WHITEBG:
+        if #available(iOS 13.0, *) {
+            if (dark) {
+                colour = UIColor.systemGray2
+            } else {
+                colour = UIColor.white
+            }
+        } else {
+            colour = UIColor.white
+        }
+    case LOGICAL_GALAXIES_BLACKBG:
+        colour = UIColor.black
+    case LOGICAL_GALAXIES_WHITEDOT:
+        colour = UIColor.white
+    case LOGICAL_GALAXIES_BLACKDOT:
+        colour = UIColor.black
+    case LOGICAL_GALAXIES_ARROW:
+        return frontendDefaultColourFor(fe: fe, output: output, logicalColour: LOGICAL_FOREGROUND)
     default:
         colour = UIColor.systemGreen
         foundColour = false
