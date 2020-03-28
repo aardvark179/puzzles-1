@@ -70,10 +70,11 @@ func frontendDefaultColourFor(fe: UnsafeMutablePointer<frontend>?, output: Unsaf
         } else {
             colour = UIColor.black
         }
-    case LOGICAL_PEARL_LINE:
+    case LOGICAL_PEARL_LINE,
+         LOGICAL_NET_WIRE:
         if #available(iOS 13.0, *) {
             if (dark) {
-                colour = UIColor.systemGray2
+                colour = UIColor.systemGray
             } else {
                 colour = UIColor.black
             }
@@ -81,7 +82,9 @@ func frontendDefaultColourFor(fe: UnsafeMutablePointer<frontend>?, output: Unsaf
             return frontendDefaultColourFor(fe: fe, output: output, logicalColour: LOGICAL_FOREGROUND)
         }
     case LOGICAL_PEARL_ERROR,
-         LOGICAL_LIGHTUP_ERROR:
+         LOGICAL_LIGHTUP_ERROR,
+         LOGICAL_NET_BARRIER,
+         LOGICAL_NET_ERR:
         colour = UIColor.systemRed
     case LOGICAL_PEARL_DRAGON:
         colour = UIColor.systemBlue
@@ -97,7 +100,7 @@ func frontendDefaultColourFor(fe: UnsafeMutablePointer<frontend>?, output: Unsaf
     case LOGICAL_LIGHTUP_OUTLINE:
         colour = UIColor.black
     case LOGICAL_LIGHTUP_LIT:
-        colour = UIColor.systemYellow
+        colour = UIColor(red: 1, green: 0.8, blue: 0, alpha: 1)
     case LOGICAL_LIGHTUP_WALL:
         if (dark) {
             colour = UIColor.darkGray
@@ -108,6 +111,12 @@ func frontendDefaultColourFor(fe: UnsafeMutablePointer<frontend>?, output: Unsaf
         colour = UIColor.black
     case LOGICAL_LIGHTUP_CURSER:
         colour = UIColor.gray
+    case LOGICAL_NET_LOCKED:
+        colour = UIColor.darkGray
+    case LOGICAL_NET_ENDPOINT:
+        colour = UIColor.blue
+    case LOGICAL_NET_POWERED:
+        colour = UIColor.cyan
     default:
         colour = UIColor.systemGreen
         foundColour = false

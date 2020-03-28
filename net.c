@@ -2515,54 +2515,13 @@ static float *game_colours(frontend *fe, int *ncolours)
      */
     frontend_default_colour(fe, &ret[COL_BACKGROUND * 3]);
 
-    /*
-     * Wires are black.
-     */
-    ret[COL_WIRE * 3 + 0] = 0.0F;
-    ret[COL_WIRE * 3 + 1] = 0.0F;
-    ret[COL_WIRE * 3 + 2] = 0.0F;
-
-    /*
-     * Powered wires and powered endpoints are cyan.
-     */
-    ret[COL_POWERED * 3 + 0] = 0.0F;
-    ret[COL_POWERED * 3 + 1] = 1.0F;
-    ret[COL_POWERED * 3 + 2] = 1.0F;
-
-    /*
-     * Barriers are red.
-     */
-    ret[COL_BARRIER * 3 + 0] = 1.0F;
-    ret[COL_BARRIER * 3 + 1] = 0.0F;
-    ret[COL_BARRIER * 3 + 2] = 0.0F;
-
-    /*
-     * Highlighted errors are red as well.
-     */
-    ret[COL_ERR * 3 + 0] = 1.0F;
-    ret[COL_ERR * 3 + 1] = 0.0F;
-    ret[COL_ERR * 3 + 2] = 0.0F;
-
-    /*
-     * Unpowered endpoints are blue.
-     */
-    ret[COL_ENDPOINT * 3 + 0] = 0.0F;
-    ret[COL_ENDPOINT * 3 + 1] = 0.0F;
-    ret[COL_ENDPOINT * 3 + 2] = 1.0F;
-
-    /*
-     * Tile borders are a darker grey than the background.
-     */
-    ret[COL_BORDER * 3 + 0] = 0.5F * ret[COL_BACKGROUND * 3 + 0];
-    ret[COL_BORDER * 3 + 1] = 0.5F * ret[COL_BACKGROUND * 3 + 1];
-    ret[COL_BORDER * 3 + 2] = 0.5F * ret[COL_BACKGROUND * 3 + 2];
-
-    /*
-     * Locked tiles are a grey in between those two.
-     */
-    ret[COL_LOCKED * 3 + 0] = 0.75F * ret[COL_BACKGROUND * 3 + 0];
-    ret[COL_LOCKED * 3 + 1] = 0.75F * ret[COL_BACKGROUND * 3 + 1];
-    ret[COL_LOCKED * 3 + 2] = 0.75F * ret[COL_BACKGROUND * 3 + 2];
+    game_mkcolour(fe, &ret[COL_WIRE * 3], LOGICAL_NET_WIRE);
+    game_mkcolour(fe, &ret[COL_POWERED * 3], LOGICAL_NET_POWERED);
+    game_mkcolour(fe, &ret[COL_BARRIER * 3], LOGICAL_NET_BARRIER);
+    game_mkcolour(fe, &ret[COL_ERR * 3], LOGICAL_NET_ERR);
+    game_mkcolour(fe, &ret[COL_ENDPOINT * 3], LOGICAL_NET_ENDPOINT);
+    game_mkcolour(fe, &ret[COL_BORDER * 3], LOGICAL_GRID);
+    game_mkcolour(fe, &ret[COL_LOCKED * 3], LOGICAL_NET_LOCKED);
 
     return ret;
 }
