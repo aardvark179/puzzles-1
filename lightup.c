@@ -79,11 +79,15 @@ int verbose = 0;
 
 enum {
     COL_BACKGROUND,
+    COL_FOREGROUND,
     COL_GRID,
-    COL_BLACK,			       /* black */
-    COL_LIGHT,			       /* white */
+    COL_WALL,
+    COL_LABEL,
+    COL_LIGHT,
+    COL_OUTLINE,
     COL_LIT,			       /* yellow */
     COL_ERROR,			       /* red */
+    COL_MARK,
     COL_CURSOR,
     NCOLOURS
 };
@@ -2022,25 +2026,18 @@ static void game_set_size(drawing *dr, game_drawstate *ds,
 static float *game_colours(frontend *fe, int *ncolours)
 {
     float *ret = snewn(3 * NCOLOURS, float);
-    int i;
 
     frontend_default_colour(fe, &ret[COL_BACKGROUND * 3]);
-
-    for (i = 0; i < 3; i++) {
-        ret[COL_BLACK * 3 + i] = 0.0F;
-        ret[COL_LIGHT * 3 + i] = 1.0F;
-        ret[COL_CURSOR * 3 + i] = ret[COL_BACKGROUND * 3 + i] / 2.0F;
-        ret[COL_GRID * 3 + i] = ret[COL_BACKGROUND * 3 + i] / 1.5F;
-
-    }
-
-    ret[COL_ERROR * 3 + 0] = 1.0F;
-    ret[COL_ERROR * 3 + 1] = 0.25F;
-    ret[COL_ERROR * 3 + 2] = 0.25F;
-
-    ret[COL_LIT * 3 + 0] = 1.0F;
-    ret[COL_LIT * 3 + 1] = 1.0F;
-    ret[COL_LIT * 3 + 2] = 0.0F;
+    game_mkcolour(fe, &ret[COL_FOREGROUND * 3], LOGICAL_FOREGROUND);
+    game_mkcolour(fe, &ret[COL_GRID * 3], LOGICAL_GRID);
+    game_mkcolour(fe, &ret[COL_WALL * 3], LOGICAL_LIGHTUP_WALL);
+    game_mkcolour(fe, &ret[COL_LABEL * 3], LOGICAL_LIGHTUP_LABEL);
+    game_mkcolour(fe, &ret[COL_LIGHT * 3], LOGICAL_LIGHTUP_LIGHT);
+    game_mkcolour(fe, &ret[COL_OUTLINE * 3], LOGICAL_LIGHTUP_OUTLINE);
+    game_mkcolour(fe, &ret[COL_LIT * 3], LOGICAL_LIGHTUP_LIT);
+    game_mkcolour(fe, &ret[COL_ERROR * 3], LOGICAL_LIGHTUP_ERROR);
+    game_mkcolour(fe, &ret[COL_MARK * 3], LOGICAL_LIGHTUP_MARK);
+    game_mkcolour(fe, &ret[COL_CURSOR * 3], LOGICAL_LIGHTUP_CURSER);
 
     *ncolours = NCOLOURS;
     return ret;
@@ -2119,9 +2116,9 @@ static void tile_redraw(drawing *dr, game_drawstate *ds,
     int lit = (ds_flags & DF_FLASH) ? COL_GRID : COL_LIT;
 
     if (ds_flags & DF_BLACK) {
-        draw_rect(dr, dx, dy, TILE_SIZE, TILE_SIZE, COL_BLACK);
+        draw_rect(dr, dx, dy, TILE_SIZE, TILE_SIZE, COL_WALL);
         if (ds_flags & DF_NUMBERED) {
-            int ccol = (ds_flags & DF_NUMBERWRONG) ? COL_ERROR : COL_LIGHT;
+            int ccol = (ds_flags & DF_NUMBERWRONG) ? COL_ERROR : COL_LABEL;
             char str[32];
 
             /* We know that this won't change over the course of the game
@@ -2139,7 +2136,7 @@ static void tile_redraw(drawing *dr, game_drawstate *ds,
         if (ds_flags & DF_LIGHT) {
             int lcol = (ds_flags & DF_OVERLAP) ? COL_ERROR : COL_LIGHT;
             draw_circle(dr, dx + TILE_SIZE/2, dy + TILE_SIZE/2, TILE_RADIUS,
-                        lcol, COL_BLACK);
+                        lcol, COL_OUTLINE);
         } else if ((ds_flags & DF_IMPOSSIBLE)) {
             static int draw_blobs_when_lit = -1;
             if (draw_blobs_when_lit < 0) {
@@ -2151,7 +2148,10 @@ static void tile_redraw(drawing *dr, game_drawstate *ds,
                 int rlen = TILE_SIZE / 4;
                 draw_rect(dr, dx + TILE_SIZE/2 - rlen/2,
                           dy + TILE_SIZE/2 - rlen/2,
-                          rlen, rlen, COL_BLACK);
+                          rlen, rlen, COL_MARK);
+                draw_rect_outline(dr, dx + TILE_SIZE/2 - rlen/2,
+                          dy + TILE_SIZE/2 - rlen/2,
+                          rlen, rlen, COL_FOREGROUND);
             }
         }
     }

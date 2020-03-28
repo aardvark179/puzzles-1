@@ -80,7 +80,8 @@ func frontendDefaultColourFor(fe: UnsafeMutablePointer<frontend>?, output: Unsaf
         } else {
             return frontendDefaultColourFor(fe: fe, output: output, logicalColour: LOGICAL_FOREGROUND)
         }
-    case LOGICAL_PEARL_ERROR:
+    case LOGICAL_PEARL_ERROR,
+         LOGICAL_LIGHTUP_ERROR:
         colour = UIColor.systemRed
     case LOGICAL_PEARL_DRAGON:
         colour = UIColor.systemBlue
@@ -90,6 +91,23 @@ func frontendDefaultColourFor(fe: UnsafeMutablePointer<frontend>?, output: Unsaf
         } else {
             colour = UIColor(red: 0.8, green: 0.8, blue: 1.0, alpha: 1)
         }
+    case LOGICAL_LIGHTUP_LIGHT,
+         LOGICAL_LIGHTUP_LABEL:
+        return frontendDefaultColourFor(fe: fe, output: output, logicalColour: LOGICAL_WHITE)
+    case LOGICAL_LIGHTUP_OUTLINE:
+        colour = UIColor.black
+    case LOGICAL_LIGHTUP_LIT:
+        colour = UIColor.systemYellow
+    case LOGICAL_LIGHTUP_WALL:
+        if (dark) {
+            colour = UIColor.darkGray
+        } else {
+            colour = UIColor.black
+        }
+    case LOGICAL_LIGHTUP_MARK:
+        colour = UIColor.black
+    case LOGICAL_LIGHTUP_CURSER:
+        colour = UIColor.gray
     default:
         colour = UIColor.systemGreen
         foundColour = false
