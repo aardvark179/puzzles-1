@@ -50,7 +50,14 @@ func frontendDefaultColourFor(fe: UnsafeMutablePointer<frontend>?, output: Unsaf
     var green: CGFloat = 0
     var blue: CGFloat = 0
     let colour: UIColor
+    var foundColour = true
     switch(logicalColour) {
+    case LOGICAL_BLACK:
+        colour = UIColor.black
+    case LOGICAL_WHITE:
+        colour = UIColor.white
+    case LOGICAL_GRID:
+        colour = UIColor(white: 0.4, alpha: 1)
     case LOGICAL_BACKGROUND:
         if #available(iOS 13.0, *) {
             colour =  UIColor.secondarySystemBackground
@@ -85,10 +92,11 @@ func frontendDefaultColourFor(fe: UnsafeMutablePointer<frontend>?, output: Unsaf
         }
     default:
         colour = UIColor.systemGreen
+        foundColour = false
     }
     colour.getRed(&red, green: &green, blue: &blue, alpha: nil)
     output?[0] = Float(red);
     output?[1] = Float(green);
     output?[2] = Float(blue);
-    return true
+    return foundColour
 }

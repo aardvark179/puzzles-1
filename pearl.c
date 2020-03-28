@@ -2286,27 +2286,13 @@ static float *game_colours(frontend *fe, int *ncolours)
 
     game_mkhighlight(fe, ret, COL_BACKGROUND, COL_HIGHLIGHT, COL_LOWLIGHT);
 
-    for (i = 0; i < 3; i++) {
-        ret[COL_BLACK * 3 + i] = 0.0F;
-        ret[COL_WHITE * 3 + i] = 1.0F;
-        ret[COL_GRID * 3 + i] = 0.4F;
-    }
-    
-    ret[COL_ERROR * 3 + 0] = 1.0F;
-    ret[COL_ERROR * 3 + 1] = 0.0F;
-    ret[COL_ERROR * 3 + 2] = 0.0F;
-
-    ret[COL_DRAGON * 3 + 0] = 0.0F;
-    ret[COL_DRAGON * 3 + 1] = 0.0F;
-    ret[COL_DRAGON * 3 + 2] = 1.0F;
-
-    ret[COL_DRAGOFF * 3 + 0] = 0.8F;
-    ret[COL_DRAGOFF * 3 + 1] = 0.8F;
-    ret[COL_DRAGOFF * 3 + 2] = 1.0F;
-
     ret[COL_FLASH * 3 + 0] = 1.0F;
     ret[COL_FLASH * 3 + 1] = 1.0F;
     ret[COL_FLASH * 3 + 2] = 1.0F;
+
+    game_mkcolour(fe, &ret[COL_BLACK * 3], LOGICAL_BLACK);
+    game_mkcolour(fe, &ret[COL_WHITE * 3], LOGICAL_WHITE);
+    game_mkcolour(fe, &ret[COL_GRID * 3], LOGICAL_GRID);
 
     game_mkcolour(fe, &ret[COL_FOREGROUND * 3], LOGICAL_FOREGROUND);
     game_mkcolour(fe, &ret[COL_LINE * 3], LOGICAL_PEARL_LINE);
