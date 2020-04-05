@@ -118,7 +118,7 @@ func frontendDefaultColourFor(fe: UnsafeMutablePointer<frontend>?, output: Unsaf
             colour = UIColor(white: 0.6, alpha: 1)
         }
     case LOGICAL_NET_LOCKED:
-        colour = UIColor.darkGray
+        colour = UIColor.lightGray
     case LOGICAL_NET_ENDPOINT:
         colour = UIColor.blue
     case LOGICAL_NET_POWERED:
