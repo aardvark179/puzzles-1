@@ -2639,34 +2639,12 @@ static float *game_colours(frontend *fe, int *ncolours)
     float *ret = snewn(3 * NCOLOURS, float);
 
     frontend_default_colour(fe, &ret[COL_BACKGROUND * 3]);
-
-    ret[COL_GRID * 3 + 0] = 0.5F * ret[COL_BACKGROUND * 3 + 0];
-    ret[COL_GRID * 3 + 1] = 0.5F * ret[COL_BACKGROUND * 3 + 1];
-    ret[COL_GRID * 3 + 2] = 0.5F * ret[COL_BACKGROUND * 3 + 2];
-
-    ret[COL_DRAG * 3 + 0] = 1.0F;
-    ret[COL_DRAG * 3 + 1] = 0.0F;
-    ret[COL_DRAG * 3 + 2] = 0.0F;
-
-    ret[COL_DRAGERASE * 3 + 0] = 0.2F;
-    ret[COL_DRAGERASE * 3 + 1] = 0.2F;
-    ret[COL_DRAGERASE * 3 + 2] = 1.0F;
-
-    ret[COL_CORRECT * 3 + 0] = 0.75F * ret[COL_BACKGROUND * 3 + 0];
-    ret[COL_CORRECT * 3 + 1] = 0.75F * ret[COL_BACKGROUND * 3 + 1];
-    ret[COL_CORRECT * 3 + 2] = 0.75F * ret[COL_BACKGROUND * 3 + 2];
-
-    ret[COL_LINE * 3 + 0] = 0.0F;
-    ret[COL_LINE * 3 + 1] = 0.0F;
-    ret[COL_LINE * 3 + 2] = 0.0F;
-
-    ret[COL_TEXT * 3 + 0] = 0.0F;
-    ret[COL_TEXT * 3 + 1] = 0.0F;
-    ret[COL_TEXT * 3 + 2] = 0.0F;
-
-    ret[COL_CURSOR * 3 + 0] = 1.0F;
-    ret[COL_CURSOR * 3 + 1] = 0.5F;
-    ret[COL_CURSOR * 3 + 2] = 0.5F;
+    frontend_default_colour_for(fe, &ret[COL_GRID * 3], LOGICAL_GRID);
+    frontend_default_colour_for(fe, &ret[COL_DRAG * 3], LOGICAL_RECT_DRAG);
+    frontend_default_colour_for(fe, &ret[COL_CORRECT * 3], LOGICAL_RECT_CORRECT);
+    frontend_default_colour_for(fe, &ret[COL_LINE * 3], LOGICAL_RECT_LINE);
+    frontend_default_colour_for(fe, &ret[COL_TEXT * 3], LOGICAL_RECT_TEXT);
+    frontend_default_colour_for(fe, &ret[COL_CURSOR * 3], LOGICAL_RECT_CURSOR);
 
     *ncolours = NCOLOURS;
     return ret;
