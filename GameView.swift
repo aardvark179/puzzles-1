@@ -80,14 +80,19 @@ class GameView : UIView, UIGestureRecognizerDelegate {
                 let constraints: [NSLayoutConstraint]
                 if #available(iOS 11.0, *) {
                     constraints = [
-                        statusbar!.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor)
+                        statusbar!.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor),
+                        statusbar!.heightAnchor.constraint(greaterThanOrEqualToConstant: 20.0),
+                        statusbar!.widthAnchor.constraint(equalTo: self.widthAnchor)
                     ]
                 } else {
-                    constraints = [statusbar!.bottomAnchor.constraint(equalTo: bottomAnchor),
-                                   statusbar!.widthAnchor.constraint(equalTo: self.widthAnchor)]
+                    constraints = [
+                        statusbar!.bottomAnchor.constraint(equalTo: bottomAnchor),
+                        statusbar!.heightAnchor.constraint(greaterThanOrEqualToConstant: 20.0),
+                        statusbar!.widthAnchor.constraint(equalTo: self.widthAnchor)
+                    ]
                 }
                 statusbar!.translatesAutoresizingMaskIntoConstraints = false
-                statusbar!.sizeToFit()
+                statusbar!.numberOfLines = 1
                 NSLayoutConstraint.activate(constraints)
             }
         } else {
