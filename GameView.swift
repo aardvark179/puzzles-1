@@ -93,7 +93,7 @@ class GameView : UIView, UIGestureRecognizerDelegate {
                 }
                 statusbar!.translatesAutoresizingMaskIntoConstraints = false
                 statusbar!.numberOfLines = 1
-                NSLayoutConstraint.activate(constraints)
+                    NSLayoutConstraint.activate(constraints)
             }
         } else {
             statusbar?.removeFromSuperview()
@@ -288,17 +288,37 @@ class GameView : UIView, UIGestureRecognizerDelegate {
     }
     
     @objc func handleLongPress(_ sender: UILongPressGestureRecognizer) {
-        if (sender.state == .ended) {
-            (touchXPoints, touchYPoints, touchXPixels, touchYPixels) = transformTouchPoint(sender.location(in: self), false)
+        (touchXPoints, touchYPoints, touchXPixels, touchYPixels) = transformTouchPoint(sender.location(in: self), false)
+        switch (sender.state) {
+        case (.began):
+            if (netShiftMode()) {
+                return
+            } else if (netCentreMode()) {
+                return
+            } else {
+                let button = theGame == net_ptr ? 2 : 1
+                midend_process_key(midend, touchXPixels, touchYPixels, ButtonDown[button])
+            }
+        case (.ended):
             if (netShiftMode()) {
                 return
             } else if (netCentreMode()) {
                 midend_process_key(midend, touchXPixels, touchYPixels, 0x03)
             } else {
                 let button = theGame == net_ptr ? 2 : 1
-                midend_process_key(midend, touchXPixels, touchYPixels, ButtonDown[button])
                 midend_process_key(midend, touchXPixels, touchYPixels, ButtonUp[button])
             }
+        case (.changed):
+            if (netShiftMode()) {
+                return
+            } else if (netCentreMode()) {
+                return
+            } else {
+                let button = theGame == net_ptr ? 2 : 1
+                midend_process_key(midend, touchXPixels, touchYPixels, ButtonDrag[button])
+            }
+        default:
+            return;
         }
     }
     
