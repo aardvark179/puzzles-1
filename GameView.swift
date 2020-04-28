@@ -339,19 +339,19 @@ class GameView : UIView, UIGestureRecognizerDelegate {
             let ts = midend_tilesize(midend)
             while (touchXPixels <= xPixels - ts) {
                 midend_process_key(midend, -1, -1, Int32(MOD_SHFT | CURSOR_LEFT))
-                touchXPixels -= ts
-            }
-            while (touchXPixels >= xPixels - ts) {
-                midend_process_key(midend, -1, -1, Int32(MOD_SHFT | CURSOR_RIGHT))
                 touchXPixels += ts
+            }
+            while (touchXPixels >= xPixels + ts) {
+                midend_process_key(midend, -1, -1, Int32(MOD_SHFT | CURSOR_RIGHT))
+                touchXPixels -= ts
             }
             while (touchYPixels <= yPixels - ts) {
                 midend_process_key(midend, -1, -1, Int32(MOD_SHFT | CURSOR_UP))
-                touchYPixels -= ts
-            }
-            while (touchYPixels >= yPixels - ts) {
-                midend_process_key(midend, -1, -1, Int32(MOD_SHFT | CURSOR_DOWN))
                 touchYPixels += ts
+            }
+            while (touchYPixels >= yPixels + ts) {
+                midend_process_key(midend, -1, -1, Int32(MOD_SHFT | CURSOR_DOWN))
+                touchYPixels -= ts
             }
         } else {
             if (touchState == 1) {
