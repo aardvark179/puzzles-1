@@ -66,7 +66,8 @@ func frontendDefaultColourFor(fe: UnsafeMutablePointer<frontend>?, output: Unsaf
         }
     case LOGICAL_FOREGROUND,
          LOGICAL_RECT_LINE,
-         LOGICAL_RECT_TEXT:
+         LOGICAL_RECT_TEXT,
+         LOGICAL_SOLO_CLUE:
         if #available(iOS 13.0, *) {
             colour = UIColor.label
         } else {
@@ -86,6 +87,7 @@ func frontendDefaultColourFor(fe: UnsafeMutablePointer<frontend>?, output: Unsaf
         }
     case LOGICAL_PEARL_ERROR,
          LOGICAL_LIGHTUP_ERROR,
+         LOGICAL_SOLO_ERROR,
          LOGICAL_NET_BARRIER,
          LOGICAL_NET_ERR:
         colour = UIColor.systemRed
@@ -128,11 +130,7 @@ func frontendDefaultColourFor(fe: UnsafeMutablePointer<frontend>?, output: Unsaf
         colour = UIColor.cyan
     case LOGICAL_GALAXIES_WHITEBG:
         if #available(iOS 13.0, *) {
-            if (dark) {
-                colour = UIColor.systemGray2
-            } else {
-                colour = UIColor.white
-            }
+            colour = UIColor.systemGray2
         } else {
             colour = UIColor.white
         }
@@ -148,18 +146,27 @@ func frontendDefaultColourFor(fe: UnsafeMutablePointer<frontend>?, output: Unsaf
         colour = UIColor.systemRed
     case LOGICAL_RECT_DRAGERASE:
         colour = UIColor.systemBlue
-    case LOGICAL_RECT_CORRECT:
-        if (dark) {
-            if #available(iOS 13.0, *) {
-                colour = UIColor.systemGray3
-            } else {
-                colour = UIColor.lightGray
-            }
+    case LOGICAL_RECT_CORRECT,
+         LOGICAL_SOLO_HIGHLIGHT:
+        if #available(iOS 13.0, *) {
+            colour = UIColor.systemGray3
         } else {
             colour = UIColor.lightGray
         }
-    default:
+    case LOGICAL_SOLO_DIAGONALS:
+        if #available(iOS 13.0, *) {
+            colour = UIColor.systemGray5
+        } else {
+            colour = UIColor.lightGray
+        }
+    case LOGICAL_SOLO_USER:
         colour = UIColor.systemGreen
+    case LOGICAL_SOLO_PENCIL:
+        colour = UIColor.systemBlue
+    case LOGICAL_SOLO_KILLER:
+        colour = UIColor.systemOrange
+    default:
+        colour = UIColor.magenta
         foundColour = false
     }
     colour.getRed(&red, green: &green, blue: &blue, alpha: nil)

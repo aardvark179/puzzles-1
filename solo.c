@@ -4808,38 +4808,14 @@ static float *game_colours(frontend *fe, int *ncolours)
     float *ret = snewn(3 * NCOLOURS, float);
 
     frontend_default_colour(fe, &ret[COL_BACKGROUND * 3]);
-
-    ret[COL_XDIAGONALS * 3 + 0] = 0.9F * ret[COL_BACKGROUND * 3 + 0];
-    ret[COL_XDIAGONALS * 3 + 1] = 0.9F * ret[COL_BACKGROUND * 3 + 1];
-    ret[COL_XDIAGONALS * 3 + 2] = 0.9F * ret[COL_BACKGROUND * 3 + 2];
-
-    ret[COL_GRID * 3 + 0] = 0.0F;
-    ret[COL_GRID * 3 + 1] = 0.0F;
-    ret[COL_GRID * 3 + 2] = 0.0F;
-
-    ret[COL_CLUE * 3 + 0] = 0.0F;
-    ret[COL_CLUE * 3 + 1] = 0.0F;
-    ret[COL_CLUE * 3 + 2] = 0.0F;
-
-    ret[COL_USER * 3 + 0] = 0.0F;
-    ret[COL_USER * 3 + 1] = 0.6F * ret[COL_BACKGROUND * 3 + 1];
-    ret[COL_USER * 3 + 2] = 0.0F;
-
-    ret[COL_HIGHLIGHT * 3 + 0] = 0.78F * ret[COL_BACKGROUND * 3 + 0];
-    ret[COL_HIGHLIGHT * 3 + 1] = 0.78F * ret[COL_BACKGROUND * 3 + 1];
-    ret[COL_HIGHLIGHT * 3 + 2] = 0.78F * ret[COL_BACKGROUND * 3 + 2];
-
-    ret[COL_ERROR * 3 + 0] = 1.0F;
-    ret[COL_ERROR * 3 + 1] = 0.0F;
-    ret[COL_ERROR * 3 + 2] = 0.0F;
-
-    ret[COL_PENCIL * 3 + 0] = 0.5F * ret[COL_BACKGROUND * 3 + 0];
-    ret[COL_PENCIL * 3 + 1] = 0.5F * ret[COL_BACKGROUND * 3 + 1];
-    ret[COL_PENCIL * 3 + 2] = ret[COL_BACKGROUND * 3 + 2];
-
-    ret[COL_KILLER * 3 + 0] = 0.5F * ret[COL_BACKGROUND * 3 + 0];
-    ret[COL_KILLER * 3 + 1] = 0.5F * ret[COL_BACKGROUND * 3 + 1];
-    ret[COL_KILLER * 3 + 2] = 0.1F * ret[COL_BACKGROUND * 3 + 2];
+    game_mkcolour(fe, &ret[COL_XDIAGONALS * 3], LOGICAL_SOLO_DIAGONALS);
+    game_mkcolour(fe, &ret[COL_GRID * 3], LOGICAL_GRID);
+    game_mkcolour(fe, &ret[COL_CLUE * 3], LOGICAL_SOLO_CLUE);
+    game_mkcolour(fe, &ret[COL_USER * 3], LOGICAL_SOLO_USER);
+    game_mkcolour(fe, &ret[COL_HIGHLIGHT * 3], LOGICAL_SOLO_HIGHLIGHT);
+    game_mkcolour(fe, &ret[COL_ERROR * 3], LOGICAL_SOLO_ERROR);
+    game_mkcolour(fe, &ret[COL_PENCIL * 3], LOGICAL_SOLO_PENCIL);
+    game_mkcolour(fe, &ret[COL_KILLER * 3], LOGICAL_SOLO_KILLER);
 
     *ncolours = NCOLOURS;
     return ret;
