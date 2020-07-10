@@ -246,6 +246,14 @@ class GameViewController : UIViewController, GameSettingsDelegate {
 //        } else {
 //            navigationController?.hidesBarsOnTap = false
 //        }
+        if #available(iOS 12.0, *) {
+            if (traitCollection.userInterfaceStyle != previousTraitCollection?.userInterfaceStyle) {
+                sfree(fe.colours)
+                fe.colours = nil
+                fe.colours = midend_colours(midend, &fe.ncolours)
+                gameView!.backgroundColor = UIColor.init(red: CGFloat(fe.colours![0]), green: CGFloat(fe.colours![1]), blue: CGFloat(fe.colours![2]), alpha: 1)
+            }
+        }
     }
 
     override func viewWillDisappear(_ animated: Bool) {
