@@ -2714,83 +2714,29 @@ static float *game_colours(frontend *fe, int *ncolours)
     float *ret = snewn(3 * NCOLOURS, float);
 
     frontend_default_colour(fe, &ret[COL_BACKGROUND * 3]);
+    game_mkcolour(fe, &ret[COL_BACKGROUND2 * 3], LOGICAL_MINES_BACKGROUND2);
+    game_mkcolour(fe, &ret[COL_1 * 3], LOGICAL_MINES_1);
+    game_mkcolour(fe, &ret[COL_2 * 3], LOGICAL_MINES_2);
+    game_mkcolour(fe, &ret[COL_3 * 3], LOGICAL_MINES_3);
+    game_mkcolour(fe, &ret[COL_4 * 3], LOGICAL_MINES_4);
+    game_mkcolour(fe, &ret[COL_5 * 3], LOGICAL_MINES_5);
+    game_mkcolour(fe, &ret[COL_6 * 3], LOGICAL_MINES_6);
+    game_mkcolour(fe, &ret[COL_7 * 3], LOGICAL_MINES_7);
+    game_mkcolour(fe, &ret[COL_8 * 3], LOGICAL_MINES_8);
 
-    ret[COL_BACKGROUND2 * 3 + 0] = ret[COL_BACKGROUND * 3 + 0] * 19.0F / 20.0F;
-    ret[COL_BACKGROUND2 * 3 + 1] = ret[COL_BACKGROUND * 3 + 1] * 19.0F / 20.0F;
-    ret[COL_BACKGROUND2 * 3 + 2] = ret[COL_BACKGROUND * 3 + 2] * 19.0F / 20.0F;
+    game_mkcolour(fe, &ret[COL_MINE * 3], LOGICAL_MINES_MINE);
+    game_mkcolour(fe, &ret[COL_BANG * 3], LOGICAL_MINES_BANG);
+    game_mkcolour(fe, &ret[COL_CROSS * 3], LOGICAL_MINES_CROSS);
+    game_mkcolour(fe, &ret[COL_FLAG * 3], LOGICAL_MINES_FLAG);
 
-    ret[COL_1 * 3 + 0] = 0.0F;
-    ret[COL_1 * 3 + 1] = 0.0F;
-    ret[COL_1 * 3 + 2] = 1.0F;
+    game_mkcolour(fe, &ret[COL_FLAGBASE * 3], LOGICAL_FOREGROUND);
+    game_mkcolour(fe, &ret[COL_QUERY * 3], LOGICAL_FOREGROUND);
 
-    ret[COL_2 * 3 + 0] = 0.0F;
-    ret[COL_2 * 3 + 1] = 0.5F;
-    ret[COL_2 * 3 + 2] = 0.0F;
+    game_mkcolour(fe, &ret[COL_HIGHLIGHT * 3], LOGICAL_HIGHLIGHT);
+    game_mkcolour(fe, &ret[COL_LOWLIGHT * 3], LOGICAL_LOWLIGHT);
 
-    ret[COL_3 * 3 + 0] = 1.0F;
-    ret[COL_3 * 3 + 1] = 0.0F;
-    ret[COL_3 * 3 + 2] = 0.0F;
-
-    ret[COL_4 * 3 + 0] = 0.0F;
-    ret[COL_4 * 3 + 1] = 0.0F;
-    ret[COL_4 * 3 + 2] = 0.5F;
-
-    ret[COL_5 * 3 + 0] = 0.5F;
-    ret[COL_5 * 3 + 1] = 0.0F;
-    ret[COL_5 * 3 + 2] = 0.0F;
-
-    ret[COL_6 * 3 + 0] = 0.0F;
-    ret[COL_6 * 3 + 1] = 0.5F;
-    ret[COL_6 * 3 + 2] = 0.5F;
-
-    ret[COL_7 * 3 + 0] = 0.0F;
-    ret[COL_7 * 3 + 1] = 0.0F;
-    ret[COL_7 * 3 + 2] = 0.0F;
-
-    ret[COL_8 * 3 + 0] = 0.5F;
-    ret[COL_8 * 3 + 1] = 0.5F;
-    ret[COL_8 * 3 + 2] = 0.5F;
-
-    ret[COL_MINE * 3 + 0] = 0.0F;
-    ret[COL_MINE * 3 + 1] = 0.0F;
-    ret[COL_MINE * 3 + 2] = 0.0F;
-
-    ret[COL_BANG * 3 + 0] = 1.0F;
-    ret[COL_BANG * 3 + 1] = 0.0F;
-    ret[COL_BANG * 3 + 2] = 0.0F;
-
-    ret[COL_CROSS * 3 + 0] = 1.0F;
-    ret[COL_CROSS * 3 + 1] = 0.0F;
-    ret[COL_CROSS * 3 + 2] = 0.0F;
-
-    ret[COL_FLAG * 3 + 0] = 1.0F;
-    ret[COL_FLAG * 3 + 1] = 0.0F;
-    ret[COL_FLAG * 3 + 2] = 0.0F;
-
-    ret[COL_FLAGBASE * 3 + 0] = 0.0F;
-    ret[COL_FLAGBASE * 3 + 1] = 0.0F;
-    ret[COL_FLAGBASE * 3 + 2] = 0.0F;
-
-    ret[COL_QUERY * 3 + 0] = 0.0F;
-    ret[COL_QUERY * 3 + 1] = 0.0F;
-    ret[COL_QUERY * 3 + 2] = 0.0F;
-
-    ret[COL_HIGHLIGHT * 3 + 0] = 1.0F;
-    ret[COL_HIGHLIGHT * 3 + 1] = 1.0F;
-    ret[COL_HIGHLIGHT * 3 + 2] = 1.0F;
-
-    ret[COL_LOWLIGHT * 3 + 0] = ret[COL_BACKGROUND * 3 + 0] * 2.0F / 3.0F;
-    ret[COL_LOWLIGHT * 3 + 1] = ret[COL_BACKGROUND * 3 + 1] * 2.0F / 3.0F;
-    ret[COL_LOWLIGHT * 3 + 2] = ret[COL_BACKGROUND * 3 + 2] * 2.0F / 3.0F;
-
-    ret[COL_WRONGNUMBER * 3 + 0] = 1.0F;
-    ret[COL_WRONGNUMBER * 3 + 1] = 0.6F;
-    ret[COL_WRONGNUMBER * 3 + 2] = 0.6F;
-
-    /* Red tinge to a light colour, for the cursor. */
-    ret[COL_CURSOR * 3 + 0] = ret[COL_HIGHLIGHT * 3 + 0];
-    ret[COL_CURSOR * 3 + 1] = ret[COL_HIGHLIGHT * 3 + 0] / 2.0F;
-    ret[COL_CURSOR * 3 + 2] = ret[COL_HIGHLIGHT * 3 + 0] / 2.0F;
+    game_mkcolour(fe, &ret[COL_CURSOR * 3], LOGICAL_MINES_CURSOR);
+    game_mkcolour(fe, &ret[COL_WRONGNUMBER * 3], LOGICAL_MINES_WRONGNUMBER);
 
     *ncolours = NCOLOURS;
     return ret;
