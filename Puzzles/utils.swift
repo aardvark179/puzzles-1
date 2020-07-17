@@ -162,7 +162,8 @@ func frontendDefaultColourFor(fe: UnsafeMutablePointer<frontend>?, output: Unsaf
         colour = UIColor.systemRed
     case LOGICAL_RECT_DRAGERASE:
         colour = UIColor.systemBlue
-    case LOGICAL_RECT_CORRECT,
+    case LOGICAL_GUESS_EMPTY,
+         LOGICAL_RECT_CORRECT,
          LOGICAL_SOLO_HIGHLIGHT:
         if #available(iOS 13.0, *) {
             colour = UIColor.systemGray3
