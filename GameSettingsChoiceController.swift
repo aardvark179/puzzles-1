@@ -61,7 +61,7 @@ class GameSettingsChoiceController : UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        delegate.didSelectChoice(index: value, value: indexPath.row)
+        delegate.didSelectChoice(index: index, value: indexPath.row)
         navigationController?.popViewController(animated: true)
     }
 }
