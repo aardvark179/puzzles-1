@@ -250,7 +250,7 @@ class GameListViewController : UICollectionViewController, GameViewControllerSav
     init(frame: CGRect) {
         let layout = GameListViewCollectionLayout(display: .list, collectionWidth: frame.width)
         self.path = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
-        self.gamesInProgress = Set()
+        self.gamesInProgress = Set<String>()
         super.init(collectionViewLayout: layout);
         if #available(iOS 13.0, *) {
             collectionView.backgroundColor = .systemGroupedBackground
@@ -258,7 +258,6 @@ class GameListViewController : UICollectionViewController, GameViewControllerSav
             collectionView.backgroundColor = .lightGray
         }
         self.title = "Puzzles"
-        self.gamesInProgress = Set<String>()
         let files: [String]
         do {
             try files = FileManager.default.contentsOfDirectory(atPath: path)
@@ -382,7 +381,7 @@ class GameListViewController : UICollectionViewController, GameViewControllerSav
             
         iconName.append("-96d24.png")
         image.image = UIImage(named: iconName)
-        inProgress.isHidden = gamesInProgress.contains(name)
+        inProgress.isHidden = !gamesInProgress.contains(name)
         
         return cell
     }
