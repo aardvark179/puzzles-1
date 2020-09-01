@@ -105,7 +105,8 @@ func frontendDefaultColourFor(fe: UnsafeMutablePointer<frontend>?, output: Unsaf
          LOGICAL_LIGHTUP_ERROR,
          LOGICAL_SOLO_ERROR,
          LOGICAL_NET_BARRIER,
-         LOGICAL_NET_ERR:
+         LOGICAL_NET_ERR,
+         LOGICAL_PATTERN_ERR:
         colour = UIColor.systemRed
     case LOGICAL_PEARL_DRAGON:
         colour = UIColor.systemBlue
@@ -207,6 +208,8 @@ func frontendDefaultColourFor(fe: UnsafeMutablePointer<frontend>?, output: Unsaf
     case LOGICAL_MINES_WRONGNUMBER,
          LOGICAL_MINES_CURSOR:
         colour = blend(first: background, second: UIColor.systemRed, factor: 0.5)
+    case LOGICAL_PATTERN_UNKNOWN:
+        colour = UIColor.gray
     default:
         colour = UIColor.magenta
         foundColour = false

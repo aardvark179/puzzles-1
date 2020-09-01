@@ -2713,7 +2713,7 @@ static float *game_colours(frontend *fe, int *ncolours)
 {
     float *ret = snewn(3 * NCOLOURS, float);
 
-    frontend_default_colour(fe, &ret[COL_BACKGROUND * 3]);
+    game_mkcolour(fe, &ret[COL_BACKGROUND * 3], LOGICAL_BACKGROUND);
     game_mkcolour(fe, &ret[COL_BACKGROUND2 * 3], LOGICAL_MINES_BACKGROUND2);
     game_mkcolour(fe, &ret[COL_1 * 3], LOGICAL_MINES_1);
     game_mkcolour(fe, &ret[COL_2 * 3], LOGICAL_MINES_2);

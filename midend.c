@@ -1200,7 +1200,7 @@ float *midend_colours(midend *me, int *ncolours)
 {
     float *ret;
 
-    ret = me->ourgame->colours(me->frontend, ncolours);
+        ret = me->ourgame->colours(me->frontend, ncolours);
 
     {
         int i;

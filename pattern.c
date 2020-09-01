@@ -1653,23 +1653,17 @@ static void game_set_size(drawing *dr, game_drawstate *ds,
 static float *game_colours(frontend *fe, int *ncolours)
 {
     float *ret = snewn(3 * NCOLOURS, float);
-    int i;
 
     frontend_default_colour(fe, &ret[COL_BACKGROUND * 3]);
 
-    for (i = 0; i < 3; i++) {
-        ret[COL_GRID    * 3 + i] = 0.3F;
-        ret[COL_UNKNOWN * 3 + i] = 0.5F;
-        ret[COL_TEXT    * 3 + i] = 0.0F;
-        ret[COL_FULL    * 3 + i] = 0.0F;
-        ret[COL_EMPTY   * 3 + i] = 1.0F;
-    }
-    ret[COL_CURSOR * 3 + 0] = 1.0F;
-    ret[COL_CURSOR * 3 + 1] = 0.25F;
-    ret[COL_CURSOR * 3 + 2] = 0.25F;
-    ret[COL_ERROR * 3 + 0] = 1.0F;
-    ret[COL_ERROR * 3 + 1] = 0.0F;
-    ret[COL_ERROR * 3 + 2] = 0.0F;
+    game_mkcolour(fe, &ret[COL_BACKGROUND * 3], LOGICAL_BACKGROUND);
+    game_mkcolour(fe, &ret[COL_GRID * 3], LOGICAL_FOREGROUND);
+    game_mkcolour(fe, &ret[COL_UNKNOWN * 3], LOGICAL_GRID);
+    game_mkcolour(fe, &ret[COL_TEXT * 3], LOGICAL_FOREGROUND);
+    game_mkcolour(fe, &ret[COL_FULL * 3], LOGICAL_WHITE);
+    game_mkcolour(fe, &ret[COL_EMPTY * 3], LOGICAL_BLACK);
+    game_mkcolour(fe, &ret[COL_CURSOR * 3], LOGICAL_RECT_CURSOR);
+    game_mkcolour(fe, &ret[COL_ERROR * 3], LOGICAL_LIGHTUP_ERROR);
 
     *ncolours = NCOLOURS;
     return ret;

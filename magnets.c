@@ -1949,7 +1949,12 @@ static float *game_colours(frontend *fe, int *ncolours)
     float *ret = snewn(3 * NCOLOURS, float);
     int i;
 
-    game_mkhighlight(fe, ret, COL_BACKGROUND, COL_HIGHLIGHT, COL_LOWLIGHT);
+    game_mkcolour(fe, &ret[COL_BACKGROUND * 3], LOGICAL_BACKGROUND);
+    game_mkcolour(fe, &ret[COL_HIGHLIGHT * 3], LOGICAL_HIGHLIGHT);
+    game_mkcolour(fe, &ret[COL_LOWLIGHT * 3], LOGICAL_LOWLIGHT);
+
+    game_mkcolour(fe, &ret[COL_TEXT * 3], LOGICAL_FOREGROUND);
+    game_mkcolour(fe, &ret[COL_NEGATIVE * 3], LOGICAL_BLACK);
 
     for (i = 0; i < 3; i++) {
         ret[COL_TEXT * 3 + i] = 0.0F;
